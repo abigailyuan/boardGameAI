@@ -1,5 +1,7 @@
 package myuan3;
 
+import aiproj.slider.Move.Direction;
+
 public class Board {
 
 	private int size;
@@ -16,7 +18,8 @@ public class Board {
 		int i = 0;
 		for(char c: line) {
 			boardMap[row][i] = c;
-			if(boardMap[row][i] == 'H') {
+			//TODO add to myPlayer.pieces
+			/*if(boardMap[row][i] == 'H') {
 				Piece q = new Piece(i, row);
 				//BoardGame.H.getQiziList().add(q);
 				i++;
@@ -28,7 +31,7 @@ public class Board {
 				i++;
 			}else if(boardMap[row][i] == 'B') {
 				i++;
-			}
+			}*/
 		}
 		
 	}
@@ -50,4 +53,8 @@ public class Board {
 		System.out.println(this.boardMap[row]);
 	}
 	
+	public Direction checkEdge(int row, int col) {
+		//TODO implement
+		return Direction.UP;
+	}
 }

@@ -5,13 +5,14 @@ import aiproj.slider.SliderPlayer;
 import java.util.Scanner;
 
 import aiproj.slider.Move;
+import aiproj.slider.Move.Direction;
 
-public class MyPlayer implements SliderPlayer{
+public class Abby implements SliderPlayer{
 	
 	Board myBoard;
 	char playerType;
 	
-	public MyPlayer() {
+	public Abby() {
 		
 	}
 
@@ -38,7 +39,21 @@ public class MyPlayer implements SliderPlayer{
 
 	@Override
 	public void update(Move move) {
-		// TODO Auto-generated method stub
+		if(move != null) {
+			//delete old piece
+			this.myBoard.boardMap[move.j-1][move.i-1] = '+';
+			
+			//add new piece
+			Direction d = move.d;
+			switch(d) {
+			//TODO handle cases
+				case UP:
+				case DOWN:
+				case LEFT:
+				case RIGHT:
+					
+			}
+		}
 		
 	}
 

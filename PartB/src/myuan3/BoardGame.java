@@ -12,7 +12,7 @@ public class BoardGame {
 
 	public static void main(String args[]) {
 		
-		MyPlayer p = new MyPlayer();
+		Abby p = new Abby();
 		p.init(4, "H + + +\nH + B +\nH B + +\n+ V V V\n", 'H');
 		
 		
