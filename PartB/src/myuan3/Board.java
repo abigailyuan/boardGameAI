@@ -13,6 +13,9 @@ public class Board {
 	private char playerType;
 	private char enemyType;
 	
+	//Enumeration of all four corners of the board
+	public enum Corner {UL, UR, DL, DR};
+	
 	public Board(int size, char playerType) {
 		
 		this.setSize(size);
@@ -28,16 +31,17 @@ public class Board {
 	}
 	
 	public void readRow(int row, String rowLine ) {
+		
 		char[] line =  rowLine.toCharArray();
 		int i = 0;
 		for(char c: line) {
 			boardMap[row][i] = c;
 			if(boardMap[row][i] == this.playerType) {
-				Piece q = new Piece(i, row);
+				Piece q = new Piece(i, convertRow(row), this.playerType);
 				this.getMyPieces().add(q);
 				i++;
 			}else if(boardMap[row][i] == this.enemyType) {
-				Piece q = new Piece(i, row);
+				Piece q = new Piece(i, convertRow(row), this.enemyType);
 				this.getEnemyPieces().add(q);
 				i++;
 			}else if(boardMap[row][i] == '+') {
@@ -67,8 +71,31 @@ public class Board {
 	}
 	
 	public Direction checkEdge(int row, int col) {
-		//TODO implement
-		return Direction.UP;
+		if(row == 0) {
+			return Direction.DOWN; 
+		}else if(row == this.size - 1) {
+			return Direction.UP;
+		}else if(col == 0) {
+			return Direction.LEFT;
+		}else if(col == this.size - 1) {
+			return Direction.RIGHT;
+		}else {
+			return null;
+		}
+	}
+	
+	public Corner checkCorner(int row, int col) {
+		if(row == 0 && col == 0) {
+			return Corner.DL;
+		}else if(row == 0 && col == this.size - 1) {
+			return Corner.DR;
+		}else if(row == this.size - 1 && col == 0) {
+			return Corner.UL;
+		}else if(row == this.size - 1 && col == this.size - 1) {
+			return Corner.UR;
+		}else {
+			return null;
+		}
 	}
 
 	public ArrayList<Piece> getMyPieces() {
@@ -85,6 +112,10 @@ public class Board {
 
 	public void setEnemyPieces(ArrayList<Piece> enemyPieces) {
 		this.enemyPieces = enemyPieces;
+	}
+
+	public int convertRow(int row) {
+		return this.size-1 - row;
 	}
 	
 }

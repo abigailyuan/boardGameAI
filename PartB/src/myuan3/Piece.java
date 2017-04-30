@@ -4,13 +4,15 @@ public class Piece {
 
 	private int col;
 	private int row;
+	private char Type;
 	
-	public Piece(int i, int row) {
+	public Piece(int i, int row, char Type) {
 		this.setCol(i);
 		this.setRow(row);
+		this.Type = Type;
 	}
 
-	private void setRow(int row) {
+	public void setRow(int row) {
 		this.row = row;
 		
 	}
@@ -26,5 +28,9 @@ public class Piece {
 	public int getRow() {
 		
 		return this.row;
+	}
+	
+	public char getType() {
+		return this.Type;
 	}
 }
