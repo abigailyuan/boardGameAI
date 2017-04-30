@@ -50,6 +50,12 @@ public class Abby implements SliderPlayer{
 			//delete old piece
 			this.myBoard.boardMap[move.j-1][move.i-1] = '+';
 			
+			//find the piece in list
+			Piece p = findPiece(move.i, move.j);
+			if(p == null) throws{
+				new exception(e);
+			}
+			
 			//add new piece
 			Direction d = move.d;
 			switch(d) {
@@ -70,18 +76,18 @@ public class Abby implements SliderPlayer{
 		return null;
 	}
 	
-	private Piece getPiece(int row, int col) {
+	private Piece findPiece(int row, int col) {
 		
 		//find the piece in my pieces
 		for(Piece p: this.myPieces) {
-			if(p.getX() == row && p.getY() == col) {
+			if(p.getCol() == col && p.getRow() == row) {
 				return p;
 			}
 		}
 		
 		//find the piece in enemy's pieces
 		for(Piece p: this.enemyPieces) {
-			if(p.getX() == row && p.getY() == col) {
+			if(p.getCol() == col && p.getRow() == row) {
 				return p;
 			}
 		}

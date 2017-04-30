@@ -2,29 +2,29 @@ package myuan3;
 
 public class Piece {
 
-	private int x;
-	private int y;
+	private int col;
+	private int row;
 	
 	public Piece(int i, int row) {
-		this.setX(i);
-		this.setY(row);
+		this.setCol(i);
+		this.setRow(row);
 	}
 
-	private void setY(int row) {
-		this.y = row;
+	private void setRow(int row) {
+		this.row = row;
 		
 	}
 
-	public int getX() {
-		return this.x;
+	public int getCol() {
+		return this.col;
 	}
 
-	public void setX(int i) {
-		this.x = i;
+	public void setCol(int i) {
+		this.col = i;
 	}
 
-	public int getY() {
+	public int getRow() {
 		
-		return this.y;
+		return this.row;
 	}
 }
