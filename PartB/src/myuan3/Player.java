@@ -22,8 +22,8 @@ public class Player {
 		if(!type){
 			for(Piece q: getQiziList()) {
 				
-				int qx = q.getX();
-				int qy = q.getY();
+				int qx = q.getCol();
+				int qy = q.getRow();
 				if((qx+1)<=(BoardGame.board.getSize()-1) &&(BoardGame.board.boardMap[qy][qx+1] == '+')) {
 					this.numLegalMove += 1;
 					
@@ -41,8 +41,8 @@ public class Player {
 		}else {// V player
 			for(Piece q: getQiziList()) {
 				
-				int qx = q.getX();
-				int qy = q.getY();
+				int qx = q.getCol();
+				int qy = q.getRow();
 				
 				
 				if((qx+1)<=(BoardGame.board.getSize()-1) &&(BoardGame.board.boardMap[qy][qx+1] == '+')) {
