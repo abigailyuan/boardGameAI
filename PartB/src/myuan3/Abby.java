@@ -2,6 +2,7 @@ package myuan3;
 
 import aiproj.slider.SliderPlayer;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import aiproj.slider.Move;
@@ -9,8 +10,10 @@ import aiproj.slider.Move.Direction;
 
 public class Abby implements SliderPlayer{
 	
-	Board myBoard;
-	char playerType;
+	private Board myBoard;
+	private char playerType;
+	private ArrayList<Piece> myPieces;
+	private ArrayList<Piece> enemyPieces;
 	
 	public Abby() {
 		
@@ -20,7 +23,7 @@ public class Abby implements SliderPlayer{
 	public void init(int dimension, String board, char player) {
 		
 		//initialise a board with dimention
-		myBoard = new Board(dimension);
+		myBoard = new Board(dimension, player);
 		int row = 0;
 		
 		//read the board
@@ -35,6 +38,10 @@ public class Abby implements SliderPlayer{
 		
 		//initialise player type
 		this.playerType = player;
+		
+		//initialise my pieces
+		this.myPieces.addAll(this.myBoard.getMyPieces());
+		this.enemyPieces.addAll(this.myBoard.getEnemyPieces());
 	}
 
 	@Override
@@ -60,6 +67,24 @@ public class Abby implements SliderPlayer{
 	@Override
 	public Move move() {
 		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	private Piece getPiece(int row, int col) {
+		
+		//find the piece in my pieces
+		for(Piece p: this.myPieces) {
+			if(p.getX() == row && p.getY() == col) {
+				return p;
+			}
+		}
+		
+		//find the piece in enemy's pieces
+		for(Piece p: this.enemyPieces) {
+			if(p.getX() == row && p.getY() == col) {
+				return p;
+			}
+		}
 		return null;
 	}
 

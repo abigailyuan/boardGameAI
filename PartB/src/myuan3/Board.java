@@ -1,16 +1,30 @@
 package myuan3;
 
+import java.util.ArrayList;
+
 import aiproj.slider.Move.Direction;
 
 public class Board {
 
 	private int size;
 	char[][] boardMap;
+	private ArrayList<Piece> myPieces;
+	private ArrayList<Piece> enemyPieces;
+	private char playerType;
+	private char enemyType;
 	
-	public Board(int size) {
+	public Board(int size, char playerType) {
 		
 		this.setSize(size);
 		boardMap = new char[size][size];
+		this.playerType = playerType;
+		if(this.playerType == 'H') {
+			this.enemyType = 'V';
+		}else {
+			this.enemyType = 'H';
+		}
+		this.setEnemyPieces(new ArrayList<Piece>());
+		this.setMyPieces(new ArrayList<Piece>());
 	}
 	
 	public void readRow(int row, String rowLine ) {
@@ -18,20 +32,19 @@ public class Board {
 		int i = 0;
 		for(char c: line) {
 			boardMap[row][i] = c;
-			//TODO add to myPlayer.pieces
-			/*if(boardMap[row][i] == 'H') {
+			if(boardMap[row][i] == this.playerType) {
 				Piece q = new Piece(i, row);
-				//BoardGame.H.getQiziList().add(q);
+				this.getMyPieces().add(q);
 				i++;
-			}else if(boardMap[row][i] == 'V') {
+			}else if(boardMap[row][i] == this.enemyType) {
 				Piece q = new Piece(i, row);
-				//BoardGame.V.getQiziList().add(q);
+				this.getEnemyPieces().add(q);
 				i++;
 			}else if(boardMap[row][i] == '+') {
 				i++;
 			}else if(boardMap[row][i] == 'B') {
 				i++;
-			}*/
+			}
 		}
 		
 	}
@@ -57,4 +70,21 @@ public class Board {
 		//TODO implement
 		return Direction.UP;
 	}
+
+	public ArrayList<Piece> getMyPieces() {
+		return myPieces;
+	}
+
+	public void setMyPieces(ArrayList<Piece> myPieces) {
+		this.myPieces = myPieces;
+	}
+
+	public ArrayList<Piece> getEnemyPieces() {
+		return enemyPieces;
+	}
+
+	public void setEnemyPieces(ArrayList<Piece> enemyPieces) {
+		this.enemyPieces = enemyPieces;
+	}
+	
 }

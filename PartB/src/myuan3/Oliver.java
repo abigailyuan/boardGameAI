@@ -19,7 +19,7 @@ public class Oliver implements SliderPlayer{
 	public void init(int dimension, String board, char player) {
 		
 		//initialise a board with dimention
-		myBoard = new Board(dimension);
+		myBoard = new Board(dimension, player);
 		int row = 0;
 		
 		//read the board
