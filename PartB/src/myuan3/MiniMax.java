@@ -11,8 +11,8 @@ public class MiniMax extends Strategy{
 	}
 
 	@Override
-	public Move makeMove(Board board, ArrayList<Piece> myPieces, ArrayList<Piece> enemyPieces) {
-		// TODO Auto-generated method stub
+	public Move makeMove(Board board, ArrayList<Piece> myPieces, ArrayList<Piece> enemyPieces, char playerType) {
+
 		return null;
 	}
 }

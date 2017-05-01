@@ -11,7 +11,7 @@ public class DFS extends Strategy{
 	}
 
 	@Override
-	public Move makeMove(Board board, ArrayList<Piece> myPieces, ArrayList<Piece> enemyPieces) {
+	public Move makeMove(Board board, ArrayList<Piece> myPieces, ArrayList<Piece> enemyPieces, char playerType) {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -119,7 +119,7 @@ public class Oliver implements SliderPlayer{
 
 	@Override
 	public Move move() {
-		Move m = this.strategy.makeMove(myBoard, myPieces, enemyPieces);
+		Move m = this.strategy.makeMove(myBoard, myPieces, enemyPieces, this.playerType);
 		return m;
 	}
 	

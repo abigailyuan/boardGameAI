@@ -125,7 +125,7 @@ public class Abby implements SliderPlayer{
 
 	@Override
 	public Move move() {
-		Move m = this.strategy.makeMove(myBoard, myPieces, enemyPieces);
+		Move m = this.strategy.makeMove(myBoard, myPieces, enemyPieces, this.playerType);
 		return m;
 	}
 	
@@ -153,4 +153,5 @@ public class Abby implements SliderPlayer{
 		}
 	}
 
+	
 }
