@@ -16,9 +16,10 @@ public class Abby implements SliderPlayer{
 	private char playerType;
 	private ArrayList<Piece> myPieces;
 	private ArrayList<Piece> enemyPieces;
+	private Strategy strategy;
 	
 	public Abby() {
-		
+		this.strategy = new DFS("DFS");
 	}
 
 	@Override
@@ -124,8 +125,8 @@ public class Abby implements SliderPlayer{
 
 	@Override
 	public Move move() {
-		// TODO Auto-generated method stub
-		return null;
+		Move m = this.strategy.makeMove(myBoard, myPieces, enemyPieces);
+		return m;
 	}
 	
 	private Piece findPiece(int row, int col) throws Exception {
