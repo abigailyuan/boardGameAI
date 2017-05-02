@@ -12,7 +12,7 @@ import aiproj.slider.Move.Direction;
 
 public class Abby implements SliderPlayer{
 	
-	private Board myBoard;
+	public Board myBoard;
 	private char playerType;
 	private ArrayList<Piece> myPieces;
 	private ArrayList<Piece> enemyPieces;
@@ -59,7 +59,11 @@ public class Abby implements SliderPlayer{
 			//find the piece in list
 			Piece p;
 			try {
-				p = findPiece(move.i, move.j);
+				p = findPiece(move.j, move.i);
+				
+				//debug
+				//System.out.println("("+p.getRow()+", "+p.getCol()+")"+"piece type: "+p.getType());
+				//debug end
 				
 				//add new piece
 				Direction d = move.d;
@@ -76,12 +80,16 @@ public class Abby implements SliderPlayer{
 							}else {
 								this.enemyPieces.remove(p);
 							}
+							//debug
+							//System.out.println("enter here");
+							//debug end
 						}else {
 							//move the piece on board and change the coordinates
 							this.myBoard.boardMap[move.j+1][move.i] = p.getType();
 							p.setCol(move.i);
 							p.setRow(move.j+1);
 						}
+						break;
 					case DOWN:
 						if(edge == Direction.DOWN || corner == Corner.DL || corner == Corner.DR) {
 							//remove if out of edge
@@ -96,6 +104,7 @@ public class Abby implements SliderPlayer{
 							p.setCol(move.i);
 							p.setRow(move.j+1);
 						}
+						break;
 					case LEFT:
 						if(edge == Direction.LEFT || corner == Corner.UL || corner == Corner.DL) {
 							//remove if out of edge
@@ -110,6 +119,7 @@ public class Abby implements SliderPlayer{
 							p.setCol(move.i-1);
 							p.setRow(move.j);
 						}
+						break;
 					case RIGHT:
 						if(edge == Direction.RIGHT || corner == Corner.UR || corner == Corner.DR) {
 							//remove if out of edge
@@ -124,6 +134,7 @@ public class Abby implements SliderPlayer{
 							p.setCol(move.i+1);
 							p.setRow(move.j);
 						}
+						break;
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
