@@ -19,6 +19,8 @@ public class Oliver implements SliderPlayer{
 	
 	public Oliver() {
 		this.strategy = new MiniMax("MiniMax");
+		this.myPieces = new ArrayList<Piece>();
+		this.enemyPieces = new ArrayList<Piece>();
 	}
 
 	@Override
@@ -45,20 +47,19 @@ public class Oliver implements SliderPlayer{
 	@Override
 	public void update(Move move) {
 		if(move != null) {
-			int j = this.myBoard.convertRow(move.j);
-			//delete old piece
-			this.myBoard.boardMap[j][move.i] = '+';
+			//delete old piece on board
+			this.myBoard.boardMap[move.j][move.i] = '+';
 			
 			//find the piece in list
 			Piece p;
 			try {
-				p = findPiece(move.i, j);
+				p = findPiece(move.i, move.j);
 				
 				//add new piece
 				Direction d = move.d;
 				//check if the piece is at edge or corner
-				Direction edge = this.myBoard.checkEdge(j, move.i);
-				Corner corner = this.myBoard.checkCorner(j, move.i);
+				Direction edge = this.myBoard.checkEdge(move.j, move.i);
+				Corner corner = this.myBoard.checkCorner(move.j, move.i);
 				
 				switch(d) {
 					case UP:
@@ -66,48 +67,56 @@ public class Oliver implements SliderPlayer{
 							//remove if out of edge
 							if(p.getType() == this.playerType) {
 								this.myPieces.remove(p);
+							}else {
+								this.enemyPieces.remove(p);
 							}
 						}else {
 							//move the piece on board and change the coordinates
-							this.myBoard.boardMap[j+1][move.i] = p.getType();
+							this.myBoard.boardMap[move.j+1][move.i] = p.getType();
 							p.setCol(move.i);
-							p.setRow(j+1);
+							p.setRow(move.j+1);
 						}
 					case DOWN:
 						if(edge == Direction.DOWN || corner == Corner.DL || corner == Corner.DR) {
 							//remove if out of edge
 							if(p.getType() == this.playerType) {
 								this.myPieces.remove(p);
+							}else {
+								this.enemyPieces.remove(p);
 							}
 						}else {
 							//move the piece on board and change the coordinates
-							this.myBoard.boardMap[j-1][move.i] = p.getType();
+							this.myBoard.boardMap[move.j-1][move.i] = p.getType();
 							p.setCol(move.i);
-							p.setRow(j+1);
+							p.setRow(move.j+1);
 						}
 					case LEFT:
 						if(edge == Direction.LEFT || corner == Corner.UL || corner == Corner.DL) {
 							//remove if out of edge
 							if(p.getType() == this.playerType) {
 								this.myPieces.remove(p);
+							}else {
+								this.enemyPieces.remove(p);
 							}
 						}else {
 							//move the piece on board and change the coordinates
-							this.myBoard.boardMap[j][move.i-1] = p.getType();
+							this.myBoard.boardMap[move.j][move.i-1] = p.getType();
 							p.setCol(move.i-1);
-							p.setRow(j);
+							p.setRow(move.j);
 						}
 					case RIGHT:
 						if(edge == Direction.RIGHT || corner == Corner.UR || corner == Corner.DR) {
 							//remove if out of edge
 							if(p.getType() == this.playerType) {
 								this.myPieces.remove(p);
+							}else {
+								this.enemyPieces.remove(p);
 							}
 						}else {
 							//move the piece on board and change the coordinates
-							this.myBoard.boardMap[j][move.i+1] = p.getType();
+							this.myBoard.boardMap[move.j][move.i+1] = p.getType();
 							p.setCol(move.i+1);
-							p.setRow(j);
+							p.setRow(move.j);
 						}
 				}
 			} catch (Exception e) {

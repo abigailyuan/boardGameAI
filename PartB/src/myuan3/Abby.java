@@ -20,6 +20,8 @@ public class Abby implements SliderPlayer{
 	
 	public Abby() {
 		this.strategy = new DFS("DFS");
+		this.myPieces = new ArrayList<Piece>();
+		this.enemyPieces = new ArrayList<Piece>();
 	}
 
 	@Override
@@ -27,7 +29,7 @@ public class Abby implements SliderPlayer{
 		
 		//initialise a board with dimention
 		myBoard = new Board(dimension, player);
-		int row = 0;
+		int row = dimension - 1;
 		
 		//read the board
 		Scanner scanner = new Scanner(board);
@@ -35,7 +37,7 @@ public class Abby implements SliderPlayer{
 			String s = scanner.nextLine();
 			this.myBoard.readRow(row, s);
 			this.myBoard.printRow(row);
-			row++;
+			row--;
 		}
 		scanner.close();
 		
@@ -45,75 +47,82 @@ public class Abby implements SliderPlayer{
 		//Initialize my pieces
 		this.myPieces.addAll(this.myBoard.getMyPieces());
 		this.enemyPieces.addAll(this.myBoard.getEnemyPieces());
+		
 	}
 
 	@Override
 	public void update(Move move){
 		if(move != null) {
-			int j = this.myBoard.convertRow(move.j);
 			//delete old piece
-			this.myBoard.boardMap[j][move.i] = '+';
+			this.myBoard.boardMap[move.j][move.i] = '+';
 			
 			//find the piece in list
 			Piece p;
 			try {
-				p = findPiece(move.i, j);
+				p = findPiece(move.i, move.j);
 				
 				//add new piece
 				Direction d = move.d;
 				//check if the piece is at edge or corner
-				Direction edge = this.myBoard.checkEdge(j, move.i);
-				Corner corner = this.myBoard.checkCorner(j, move.i);
+				Direction edge = this.myBoard.checkEdge(move.j, move.i);
+				Corner corner = this.myBoard.checkCorner(move.j, move.i);
 				
 				switch(d) {
-				//TODO handle cases
 					case UP:
 						if(edge == Direction.UP || corner == Corner.UL || corner == Corner.UR) {
 							//remove if out of edge
 							if(p.getType() == this.playerType) {
 								this.myPieces.remove(p);
+							}else {
+								this.enemyPieces.remove(p);
 							}
 						}else {
 							//move the piece on board and change the coordinates
-							this.myBoard.boardMap[j+1][move.i] = p.getType();
+							this.myBoard.boardMap[move.j+1][move.i] = p.getType();
 							p.setCol(move.i);
-							p.setRow(j+1);
+							p.setRow(move.j+1);
 						}
 					case DOWN:
 						if(edge == Direction.DOWN || corner == Corner.DL || corner == Corner.DR) {
 							//remove if out of edge
 							if(p.getType() == this.playerType) {
 								this.myPieces.remove(p);
+							}else {
+								this.enemyPieces.remove(p);
 							}
 						}else {
 							//move the piece on board and change the coordinates
-							this.myBoard.boardMap[j-1][move.i] = p.getType();
+							this.myBoard.boardMap[move.j-1][move.i] = p.getType();
 							p.setCol(move.i);
-							p.setRow(j+1);
+							p.setRow(move.j+1);
 						}
 					case LEFT:
 						if(edge == Direction.LEFT || corner == Corner.UL || corner == Corner.DL) {
 							//remove if out of edge
 							if(p.getType() == this.playerType) {
 								this.myPieces.remove(p);
+							}else {
+								this.enemyPieces.remove(p);
 							}
 						}else {
 							//move the piece on board and change the coordinates
-							this.myBoard.boardMap[j][move.i-1] = p.getType();
+							this.myBoard.boardMap[move.j][move.i-1] = p.getType();
 							p.setCol(move.i-1);
-							p.setRow(j);
+							p.setRow(move.j);
 						}
 					case RIGHT:
 						if(edge == Direction.RIGHT || corner == Corner.UR || corner == Corner.DR) {
 							//remove if out of edge
 							if(p.getType() == this.playerType) {
 								this.myPieces.remove(p);
+							}else {
+								this.enemyPieces.remove(p);
 							}
 						}else {
 							//move the piece on board and change the coordinates
-							this.myBoard.boardMap[j][move.i+1] = p.getType();
+							this.myBoard.boardMap[move.j][move.i+1] = p.getType();
 							p.setCol(move.i+1);
-							p.setRow(j);
+							p.setRow(move.j);
 						}
 				}
 			} catch (Exception e) {

@@ -12,7 +12,7 @@ public class MiniMax extends Strategy{
 
 	@Override
 	public Move makeMove(Board board, ArrayList<Piece> myPieces, ArrayList<Piece> enemyPieces, char playerType) {
-
+		ArrayList<Move> legalMoves = totalLegalMoves(myPieces, board, playerType);
 		return null;
 	}
 }

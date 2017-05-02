@@ -8,8 +8,8 @@ public class Board {
 
 	private int size;
 	char[][] boardMap;
-	private ArrayList<Piece> myPieces;
-	private ArrayList<Piece> enemyPieces;
+	public ArrayList<Piece> myPieces;
+	public ArrayList<Piece> enemyPieces;
 	private char playerType;
 	private char enemyType;
 	
@@ -26,8 +26,8 @@ public class Board {
 		}else {
 			this.enemyType = 'H';
 		}
-		this.setEnemyPieces(new ArrayList<Piece>());
-		this.setMyPieces(new ArrayList<Piece>());
+		this.myPieces = new ArrayList<Piece>();
+		this.enemyPieces = new ArrayList<Piece>();
 	}
 	
 	public void readRow(int row, String rowLine ) {
@@ -37,12 +37,12 @@ public class Board {
 		for(char c: line) {
 			boardMap[row][i] = c;
 			if(boardMap[row][i] == this.playerType) {
-				Piece q = new Piece(i, convertRow(row), this.playerType);
-				this.getMyPieces().add(q);
+				Piece q = new Piece(i, row, this.playerType);
+				this.myPieces.add(q);
 				i++;
 			}else if(boardMap[row][i] == this.enemyType) {
-				Piece q = new Piece(i, convertRow(row), this.enemyType);
-				this.getEnemyPieces().add(q);
+				Piece q = new Piece(i, row, this.enemyType);
+				this.enemyPieces.add(q);
 				i++;
 			}else if(boardMap[row][i] == '+') {
 				i++;
