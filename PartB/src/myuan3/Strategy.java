@@ -35,7 +35,7 @@ public abstract class Strategy {
 		ArrayList<Move> legalMoves = new ArrayList<Move>();
 		
 		if(playerType == 'H') {
-			if(checkUp(p, board)) {
+			if(checkUp(p, board) && board.checkEdge(p.getRow(), p.getCol()) != Direction.UP) {
 				legalMoves.add(new Move(p.getCol(), p.getRow(), Direction.UP));
 			}
 			if(checkDown(p, board)) {
@@ -51,7 +51,7 @@ public abstract class Strategy {
 			if(checkLeft(p, board)) {
 				legalMoves.add(new Move(p.getCol(), p.getRow(), Direction.LEFT));
 			}
-			if(checkRight(p, board)) {
+			if(checkRight(p, board) && board.checkEdge(p.getRow(), p.getCol()) != Direction.RIGHT) {
 				legalMoves.add(new Move(p.getCol(), p.getRow(), Direction.RIGHT));
 			}
 		}

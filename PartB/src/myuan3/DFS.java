@@ -12,8 +12,10 @@ public class DFS extends Strategy{
 
 	@Override
 	public Move makeMove(Board board, ArrayList<Piece> myPieces, ArrayList<Piece> enemyPieces, char playerType) {
-		// TODO Auto-generated method stub
-		return null;
+		ArrayList<Move> legalMoves = totalLegalMoves(myPieces, board, playerType);
+		int numLegalMoves = legalMoves.size();
+		
+		return legalMoves.get(0);
 	}
 
 }

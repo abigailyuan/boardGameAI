@@ -84,6 +84,23 @@ public class Board {
 		}
 	}
 	
+	public boolean checkEdgeUP() {
+		//TODO
+		return true;
+	}
+	public boolean checkEdgeRIGHT() {
+		//TODO
+		return true;
+	}
+	public boolean checkEdgeLEFT() {
+		//TODO
+		return true;
+	}
+	public boolean checkEdgeDOWN() {
+		//TODO
+		return true;
+	}
+	
 	public Corner checkCorner(int row, int col) {
 		if(row == 0 && col == 0) {
 			return Corner.DL;

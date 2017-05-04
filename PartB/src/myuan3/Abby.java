@@ -36,7 +36,7 @@ public class Abby implements SliderPlayer{
 		while(scanner.hasNextLine()) {
 			String s = scanner.nextLine();
 			this.myBoard.readRow(row, s);
-			this.myBoard.printRow(row);
+			//this.myBoard.printRow(row);
 			row--;
 		}
 		scanner.close();
