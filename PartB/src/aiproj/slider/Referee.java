@@ -21,6 +21,9 @@ import aiproj.slider.Move;
  * See the specification for more detialed instructions
  */
 public class Referee {
+	
+	//testing----------------------------------------------------------
+	public static final int RUNS = 100000;
 
 	/** Load provided classes, and play a game of Slider */
 	public static void main(String[] args) {
@@ -30,10 +33,16 @@ public class Referee {
 		 */
 		Options options = new Options(args);
 		
-
+		//testing------------------------------------------------------------
+		int numOfRun = 0;
+		int Hwin = 0;
+		int Vwin = 0;
+		int tie = 0;
+		
 		/* * * *
 		 * then, set up the board and initialise the players
 		 */
+		while(numOfRun < RUNS) {
 
 		// create a new board
 		Board board = new Board(options.dimension);
@@ -113,6 +122,21 @@ public class Referee {
 			System.out.println(" " + message);
 			System.out.println(" (move: " + previousMove + ")");
 		}
+		
+		//testing--------------------------------------------
+		if(board.winner() == "vertical!") {
+			Vwin++;
+		}else if(board.winner() == "horizontal!") {
+			Hwin++;
+		}else {
+			tie++;
+		}
+		numOfRun++;
+	}//end of while
+		System.out.println("total runs: "+ RUNS);
+		System.out.println("Vwin = "+Vwin);
+		System.out.println("Hwin = "+Hwin);
+		System.out.println("tie = "+tie);
 	}
 
 	/** Helper function for rendering a board */
