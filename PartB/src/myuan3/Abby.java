@@ -12,7 +12,7 @@ import aiproj.slider.Move.Direction;
 
 public class Abby implements SliderPlayer{
 	
-	public Board myBoard;
+	public static Board myBoard;
 	private char playerType;
 	private ArrayList<Piece> myPieces;
 	private ArrayList<Piece> enemyPieces;
@@ -60,6 +60,7 @@ public class Abby implements SliderPlayer{
 			Piece p;
 			try {
 				p = findPiece(move.j, move.i);
+				//System.out.println("this piece at"+p.getRow()+", "+p.getCol());
 				
 				//debug
 				//System.out.println("("+p.getRow()+", "+p.getCol()+")"+"piece type: "+p.getType());
@@ -73,7 +74,7 @@ public class Abby implements SliderPlayer{
 				
 				switch(d) {
 					case UP:
-						if(edge == Direction.UP || corner == Corner.UL || corner == Corner.UR) {
+						if(this.myBoard.checkEdgeUP(move.j, move.i)) {
 							//remove if out of edge
 							if(p.getType() == this.playerType) {
 								this.myPieces.remove(p);
@@ -91,7 +92,7 @@ public class Abby implements SliderPlayer{
 						}
 						break;
 					case DOWN:
-						if(edge == Direction.DOWN || corner == Corner.DL || corner == Corner.DR) {
+						if(this.myBoard.checkEdgeDOWN(move.j, move.i)) {
 							//remove if out of edge
 							if(p.getType() == this.playerType) {
 								this.myPieces.remove(p);
@@ -102,11 +103,11 @@ public class Abby implements SliderPlayer{
 							//move the piece on board and change the coordinates
 							this.myBoard.boardMap[move.j-1][move.i] = p.getType();
 							p.setCol(move.i);
-							p.setRow(move.j+1);
+							p.setRow(move.j-1);
 						}
 						break;
 					case LEFT:
-						if(edge == Direction.LEFT || corner == Corner.UL || corner == Corner.DL) {
+						if(this.myBoard.checkEdgeLEFT(move.j, move.i)) {
 							//remove if out of edge
 							if(p.getType() == this.playerType) {
 								this.myPieces.remove(p);
@@ -121,7 +122,7 @@ public class Abby implements SliderPlayer{
 						}
 						break;
 					case RIGHT:
-						if(edge == Direction.RIGHT || corner == Corner.UR || corner == Corner.DR) {
+						if(this.myBoard.checkEdgeRIGHT(move.j, move.i)) {
 							//remove if out of edge
 							if(p.getType() == this.playerType) {
 								this.myPieces.remove(p);
@@ -145,7 +146,8 @@ public class Abby implements SliderPlayer{
 
 	@Override
 	public Move move() {
-		Move m = this.strategy.makeMove(myBoard, myPieces, enemyPieces, this.playerType);
+		Move m = this.strategy.makeMove(myBoard, myPieces, enemyPieces, this.playerType, this);
+		//System.out.println("move is ("+m.j+", "+m.i+")");
 		return m;
 	}
 	

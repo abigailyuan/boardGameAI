@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import aiproj.slider.Move;
 import aiproj.slider.Move.Direction;
+import aiproj.slider.SliderPlayer;
 
 public abstract class Strategy {
 	
@@ -13,7 +14,7 @@ public abstract class Strategy {
 		this.name = name;
 	}
 
-	public abstract Move makeMove(Board board, ArrayList<Piece> myPieces, ArrayList<Piece> enemyPieces, char playerType);
+	public abstract Move makeMove(Board board, ArrayList<Piece> myPieces, ArrayList<Piece> enemyPieces, char playerType, SliderPlayer player);
 	
 	protected ArrayList<Move> totalLegalMoves(ArrayList<Piece> Pieces, Board board, char playerType){
 
@@ -33,40 +34,67 @@ public abstract class Strategy {
 		
 		//create a list to store legal moves for the player
 		ArrayList<Move> legalMoves = new ArrayList<Move>();
-		
-		if(playerType == 'H') {
-			if(checkUp(p, board) && board.checkEdge(p.getRow(), p.getCol()) != Direction.UP) {
-				legalMoves.add(new Move(p.getCol(), p.getRow(), Direction.UP));
+		//H player
+			if(playerType == 'H'){
+					int qx = p.getCol();
+					int qy = p.getRow();
+					if((qx+1)<=(board.getSize()-1) &&(board.boardMap[qy][qx+1] == '+')) {
+						legalMoves.add(new Move(p.getCol(), p.getRow(), Direction.RIGHT));	
+					}
+					if((qy+1)<=(board.getSize()-1) &&(board.boardMap[qy+1][qx] == '+')) {
+						legalMoves.add(new Move(p.getCol(), p.getRow(), Direction.UP));	
+					}
+					if((qy-1)>= 0 &&(board.boardMap[qy-1][qx] == '+')) {
+						legalMoves.add(new Move(p.getCol(), p.getRow(), Direction.DOWN));		
+					}
+					if((qx+1) == board.getSize()) {
+						legalMoves.add(new Move(p.getCol(), p.getRow(), Direction.RIGHT));	
+					}
+			}else {// V player		
+				int qx = p.getCol();
+				int qy = p.getRow();
+				if((qx+1)<=(board.getSize()-1) &&(board.boardMap[qy][qx+1] == '+')) {
+					legalMoves.add(new Move(p.getCol(), p.getRow(), Direction.RIGHT));
+				}
+				if((qx-1)>= 0 &&(board.boardMap[qy][qx-1] == '+')) {
+					legalMoves.add(new Move(p.getCol(), p.getRow(), Direction.LEFT));
+				}
+				if((qy+1) < board.getSize() &&(board.boardMap[qy+1][qx] == '+')) {
+					legalMoves.add(new Move(p.getCol(), p.getRow(), Direction.UP));
+				}
+				if((qy+1) == board.getSize()) {
+					legalMoves.add(new Move(p.getCol(), p.getRow(), Direction.UP));
+				}
 			}
-			if(checkDown(p, board)) {
-				legalMoves.add(new Move(p.getCol(), p.getRow(), Direction.DOWN));
-			}
-			if(checkRight(p, board)) {
-				legalMoves.add(new Move(p.getCol(), p.getRow(), Direction.RIGHT));
-			}
-		}else if(playerType == 'V') {
-			if(checkUp(p, board)) {
-				legalMoves.add(new Move(p.getCol(), p.getRow(), Direction.UP));
-			}
-			if(checkLeft(p, board)) {
-				legalMoves.add(new Move(p.getCol(), p.getRow(), Direction.LEFT));
-			}
-			if(checkRight(p, board) && board.checkEdge(p.getRow(), p.getCol()) != Direction.RIGHT) {
-				legalMoves.add(new Move(p.getCol(), p.getRow(), Direction.RIGHT));
-			}
-		}
 		
 		return legalMoves;
 	}
 	
 	private boolean checkUp(Piece p, Board board) {
-
-		if(p.getRow() == board.getSize()-1) {
-			return true;
-		}else if(board.boardMap[board.convertRow(p.getRow())-1][p.getCol()] == '+') {
-			return true;
+		
+		char type = p.getType();
+		if(type == 'H') {
+			if(board.checkEdgeUP(p.getRow(), p.getCol())) {
+				return false;
+			}else if(board.boardMap[p.getRow()+1][p.getCol()] != '+') {
+				return false;
+			}
+		}else if(type == 'V') {
+			if(!board.checkEdgeUP(p.getRow(), p.getCol()) && board.boardMap[p.getRow()+1][p.getCol()] != '+') {
+				return false;
+			}else if(board.checkEdgeUP(p.getRow(), p.getCol())) {
+				return true;
+			}
 		}
-		return false;
+		return true;
+		
+		
+//		if(p.getRow() == board.getSize()-1) {
+//			return true;
+//		}else if(board.boardMap[board.convertRow(p.getRow())-1][p.getCol()] == '+') {
+//			return true;
+//		}
+//		return false;
 	}
 	private boolean checkDown(Piece p, Board board) {
 

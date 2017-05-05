@@ -11,7 +11,7 @@ import aiproj.slider.Move;
 
 public class Oliver implements SliderPlayer{
 	
-	Board myBoard;
+	public static Board myBoard;
 	char playerType;
 	private ArrayList<Piece> myPieces;
 	private ArrayList<Piece> enemyPieces;
@@ -28,7 +28,7 @@ public class Oliver implements SliderPlayer{
 		
 		//initialise a board with dimention
 		myBoard = new Board(dimension, player);
-		int row = 0;
+		int row = dimension - 1;
 		
 		//read the board
 		Scanner scanner = new Scanner(board);
@@ -36,24 +36,33 @@ public class Oliver implements SliderPlayer{
 			String s = scanner.nextLine();
 			this.myBoard.readRow(row, s);
 			//this.myBoard.printRow(row);
-			row++;
+			row--;
 		}
 		scanner.close();
 		
-		//initialise player type
+		//Initialize player type
 		this.playerType = player;
+		
+		//Initialize my pieces
+		this.myPieces.addAll(this.myBoard.getMyPieces());
+		this.enemyPieces.addAll(this.myBoard.getEnemyPieces());
+		
 	}
 
 	@Override
-	public void update(Move move) {
+	public void update(Move move){
 		if(move != null) {
-			//delete old piece on board
+			//delete old piece
 			this.myBoard.boardMap[move.j][move.i] = '+';
 			
 			//find the piece in list
 			Piece p;
 			try {
-				p = findPiece(move.i, move.j);
+				p = findPiece(move.j, move.i);
+				
+				//debug
+				//System.out.println("("+p.getRow()+", "+p.getCol()+")"+"piece type: "+p.getType());
+				//debug end
 				
 				//add new piece
 				Direction d = move.d;
@@ -70,12 +79,16 @@ public class Oliver implements SliderPlayer{
 							}else {
 								this.enemyPieces.remove(p);
 							}
+							//debug
+							//System.out.println("enter here");
+							//debug end
 						}else {
 							//move the piece on board and change the coordinates
 							this.myBoard.boardMap[move.j+1][move.i] = p.getType();
 							p.setCol(move.i);
 							p.setRow(move.j+1);
 						}
+						break;
 					case DOWN:
 						if(edge == Direction.DOWN || corner == Corner.DL || corner == Corner.DR) {
 							//remove if out of edge
@@ -88,8 +101,9 @@ public class Oliver implements SliderPlayer{
 							//move the piece on board and change the coordinates
 							this.myBoard.boardMap[move.j-1][move.i] = p.getType();
 							p.setCol(move.i);
-							p.setRow(move.j+1);
+							p.setRow(move.j-1);
 						}
+						break;
 					case LEFT:
 						if(edge == Direction.LEFT || corner == Corner.UL || corner == Corner.DL) {
 							//remove if out of edge
@@ -104,6 +118,7 @@ public class Oliver implements SliderPlayer{
 							p.setCol(move.i-1);
 							p.setRow(move.j);
 						}
+						break;
 					case RIGHT:
 						if(edge == Direction.RIGHT || corner == Corner.UR || corner == Corner.DR) {
 							//remove if out of edge
@@ -118,6 +133,7 @@ public class Oliver implements SliderPlayer{
 							p.setCol(move.i+1);
 							p.setRow(move.j);
 						}
+						break;
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -128,7 +144,7 @@ public class Oliver implements SliderPlayer{
 
 	@Override
 	public Move move() {
-		Move m = this.strategy.makeMove(myBoard, myPieces, enemyPieces, this.playerType);
+		Move m = this.strategy.makeMove(myBoard, myPieces, enemyPieces, this.playerType, this);
 		return m;
 	}
 	
@@ -156,4 +172,5 @@ public class Oliver implements SliderPlayer{
 		}
 	}
 
+	
 }

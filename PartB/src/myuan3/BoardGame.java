@@ -18,16 +18,30 @@ public class BoardGame {
 		Abby abby = new Abby();
 		abby.init(4, "H + + +\nH + B +\nH B + +\n+ V V V\n", 'H');
 		
-//		//debug
-//		System.out.println("---------------------");
-//		Move m = new Move(0, 3, Direction.RIGHT);
-//		abby.update(m);
-//		int row = 3;
-//		while(row >= 0) {
-//			abby.myBoard.printRow(row);
-//			row --;
-//		}
-//		//debug end
+		//debug
+		System.out.println("---------------------");
+		Move m = new Move(0, 3, Direction.RIGHT);
+		m = abby.move();
+		System.out.println("move: ("+m.j+", "+m.i+") "+m.d);
+		abby.update(m);
+		m = abby.move();
+		System.out.println("move: ("+m.j+", "+m.i+") "+m.d);
+		abby.update(m);
+		m = abby.move();
+		System.out.println("move: ("+m.j+", "+m.i+") "+m.d);
+		abby.update(m);
+		m = abby.move();
+		System.out.println("move: ("+m.j+", "+m.i+") "+m.d);
+		abby.update(m);
+		m = abby.move();
+		System.out.println("move: ("+m.j+", "+m.i+") "+m.d);
+		abby.update(m);
+		int row = 3;
+		while(row >= 0) {
+			abby.myBoard.printRow(row);
+			row --;
+		}
+		//debug end
 		
 		Oliver oliver = new Oliver();
 		oliver.init(4, "H + + +\nH + B +\nH B + +\n+ V V V\n", 'V');

@@ -84,21 +84,33 @@ public class Board {
 		}
 	}
 	
-	public boolean checkEdgeUP() {
-		//TODO
-		return true;
+	public boolean checkEdgeUP(int row, int col) {
+
+		if(row == this.size - 1) {
+			return true;
+		}
+			return false;
 	}
-	public boolean checkEdgeRIGHT() {
-		//TODO
-		return true;
+	public boolean checkEdgeRIGHT(int row, int col) {
+		
+		if(col == this.size - 1) {
+			return true;
+		}
+		return false;
 	}
-	public boolean checkEdgeLEFT() {
-		//TODO
-		return true;
+	public boolean checkEdgeLEFT(int row, int col) {
+
+		if(col == 0) {
+			return true;
+		}
+		return false;
 	}
-	public boolean checkEdgeDOWN() {
-		//TODO
-		return true;
+	public boolean checkEdgeDOWN(int row, int col) {
+
+		if(row == 0) {
+			return true;
+		}
+		return false;
 	}
 	
 	public Corner checkCorner(int row, int col) {
