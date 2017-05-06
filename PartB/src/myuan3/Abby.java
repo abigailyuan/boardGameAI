@@ -19,7 +19,8 @@ public class Abby implements SliderPlayer{
 	private Strategy strategy;
 	
 	public Abby() {
-		this.strategy = new DFS("DFS");
+		//this.strategy = new DFS("DFS");
+		this.strategy = new FastWin("FastWin");
 		this.myPieces = new ArrayList<Piece>();
 		this.enemyPieces = new ArrayList<Piece>();
 	}

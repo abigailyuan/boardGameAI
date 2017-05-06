@@ -87,14 +87,6 @@ public abstract class Strategy {
 			}
 		}
 		return true;
-		
-		
-//		if(p.getRow() == board.getSize()-1) {
-//			return true;
-//		}else if(board.boardMap[board.convertRow(p.getRow())-1][p.getCol()] == '+') {
-//			return true;
-//		}
-//		return false;
 	}
 	private boolean checkDown(Piece p, Board board) {
 
@@ -122,5 +114,38 @@ public abstract class Strategy {
 			return true;
 		}
 		return false;
+	}
+	
+	protected int[] doMove(Move m, int size) {
+		Direction d = m.d;
+		int row = m.j;
+		int col = m.i;
+		switch(d) {
+			case UP:
+				row++;
+				if(row == size) {
+					return null;
+				}
+				break;
+				
+			case DOWN:
+				row--;
+				break;
+			
+			case LEFT:
+				col--;
+				break;
+				
+			case RIGHT:
+				col++;
+				if(col == size) {
+					return null;
+				}
+				break;
+		}
+		int[] coordinates = null;
+		coordinates[0] = row;
+		coordinates[1] = col;
+		return coordinates;
 	}
 }
