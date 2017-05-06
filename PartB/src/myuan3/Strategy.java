@@ -120,6 +120,7 @@ public abstract class Strategy {
 		Direction d = m.d;
 		int row = m.j;
 		int col = m.i;
+		//System.out.println("move row: "+row+" col: "+col);
 		switch(d) {
 			case UP:
 				row++;
@@ -143,9 +144,60 @@ public abstract class Strategy {
 				}
 				break;
 		}
-		int[] coordinates = null;
+		int[] coordinates = new int[2];
 		coordinates[0] = row;
 		coordinates[1] = col;
 		return coordinates;
+	}
+	
+	protected int[] reverseMove(Move m, int size) {
+		Direction d = m.d;
+		int row = m.j;
+		int col = m.i;
+		//System.out.println("move row: "+row+" col: "+col);
+		switch(d) {
+			case UP:
+				row--;
+				if(row == size) {
+					return null;
+				}
+				break;
+				
+			case DOWN:
+				row++;
+				break;
+			
+			case LEFT:
+				col++;
+				break;
+				
+			case RIGHT:
+				col--;
+				if(col == size) {
+					return null;
+				}
+				break;
+		}
+		int[] coordinates = new int[2];
+		coordinates[0] = row;
+		coordinates[1] = col;
+		return coordinates;
+	}
+	
+	protected Piece findPiece(int row, int col, ArrayList<Piece> myPieces) throws Exception {
+		
+		Piece pReturn = null;
+		
+		//find the piece in my pieces
+		for(Piece p: myPieces) {
+			if(p.getCol() == col && p.getRow() == row) {
+				pReturn = p;
+			}
+		}
+		if(pReturn == null) {
+			throw new Exception("Piece not found.");
+		}else {
+			return pReturn;
+		}
 	}
 }

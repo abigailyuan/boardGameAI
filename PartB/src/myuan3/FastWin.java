@@ -41,7 +41,7 @@ public class FastWin extends Strategy{
 			m = bestMoves.get(i);
 		}
 		player.update(m);
-		System.out.println("current least dist = "+current_least_dist);
+		//System.out.println("current least dist = "+current_least_dist);
 		return m;
 	}
 	
