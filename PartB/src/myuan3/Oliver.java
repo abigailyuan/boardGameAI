@@ -18,7 +18,10 @@ public class Oliver implements SliderPlayer{
 	private Strategy strategy;
 	
 	public Oliver() {
-		this.strategy = new LimitedDepth("LimitedDepth");
+		//this.strategy = new DFS("DFS");
+		this.strategy = new MiniMax("MiniMax");
+		//this.strategy = new FastWin("FastWin");
+		//this.strategy = new LimitedDepth("LimitedDepth");
 		this.myPieces = new ArrayList<Piece>();
 		this.enemyPieces = new ArrayList<Piece>();
 	}
