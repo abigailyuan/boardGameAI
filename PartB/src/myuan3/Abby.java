@@ -21,6 +21,7 @@ public class Abby implements SliderPlayer{
 	public Abby() {
 		this.strategy = new MiniMax("MiniMax");
 		//this.strategy = new FastWin("FastWin");
+		//this.strategy = new DFS("DFS");
 		this.myPieces = new ArrayList<Piece>();
 		this.enemyPieces = new ArrayList<Piece>();
 	}
