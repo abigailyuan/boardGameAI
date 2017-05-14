@@ -38,6 +38,8 @@ public abstract class Strategy {
 			if(playerType == 'H'){
 					int qx = p.getCol();
 					int qy = p.getRow();
+					//System.out.println("qx = "+qx);
+					//System.out.println("qy = "+qy);
 					if((qx+1)<=(board.getSize()-1) &&(board.boardMap[qy][qx+1] == '+')) {
 						legalMoves.add(new Move(p.getCol(), p.getRow(), Direction.RIGHT));
 					}

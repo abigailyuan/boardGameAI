@@ -1,6 +1,7 @@
 package myuan3;
 
 import java.util.ArrayList;
+import myuan3.Piece;
 
 import aiproj.slider.Move.Direction;
 
@@ -64,9 +65,22 @@ public class Board {
 		return newBoard;
 	}
 	
-	public static ArrayList<Piece> scpPieces(Board board, char playerType){
+	public static ArrayList<Piece> scpmyPieces(Board board){
 		ArrayList<Piece> piecesList = new ArrayList<Piece>();
-		for(Piece p:)
+		for(Piece p: board.myPieces) {
+			Piece newp = new Piece(p.getCol(), p.getRow(), p.getType());
+			piecesList.add(newp);
+		}
+		return piecesList;
+	}
+	
+	public static ArrayList<Piece> scpenemyPieces(Board board){
+		ArrayList<Piece> piecesList = new ArrayList<Piece>();
+		for(Piece p: board.enemyPieces) {
+			Piece newp = new Piece(p.getCol(), p.getRow(), p.getType());
+			piecesList.add(newp);
+		}
+		return piecesList;
 	}
 	public boolean isEmpty(int row, int col) {
 		

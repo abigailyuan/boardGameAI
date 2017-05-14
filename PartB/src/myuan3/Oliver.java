@@ -3,6 +3,7 @@ package myuan3;
 import aiproj.slider.SliderPlayer;
 import aiproj.slider.Move.Direction;
 import myuan3.Board.Corner;
+import myuan3.Piece;
 
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -18,8 +19,8 @@ public class Oliver implements SliderPlayer{
 	private Strategy strategy;
 	
 	public Oliver() {
-		//this.strategy = new DFS("DFS");
-		this.strategy = new Stupid("MiniMax");
+		this.strategy = new DFS("DFS");
+		//this.strategy = new Stupid("MiniMax");
 		//this.strategy = new FastWin("FastWin");
 		//this.strategy = new LimitedDepth("LimitedDepth");
 		this.myPieces = new ArrayList<Piece>();
