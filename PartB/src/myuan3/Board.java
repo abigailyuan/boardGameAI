@@ -10,8 +10,8 @@ public class Board {
 	char[][] boardMap;
 	public ArrayList<Piece> myPieces;
 	public ArrayList<Piece> enemyPieces;
-	private char playerType;
-	private char enemyType;
+	public char playerType;
+	public char enemyType;
 	
 	//Enumeration of all four corners of the board
 	public enum Corner {UL, UR, DL, DR};
@@ -50,9 +50,24 @@ public class Board {
 				i++;
 			}
 		}
-		
 	}
 	
+	public static Board cpyBoard(Board board) {
+		Board newBoard = new Board(board.getSize(), board.playerType);
+		int row = 0;
+		int col = 0;
+		for(row=0;row<board.getSize();row++) {
+			for(col=0;col<board.getSize();col++) {
+				newBoard.boardMap[row][col] = board.boardMap[row][col];
+			}
+		}
+		return newBoard;
+	}
+	
+	public static ArrayList<Piece> scpPieces(Board board, char playerType){
+		ArrayList<Piece> piecesList = new ArrayList<Piece>();
+		for(Piece p:)
+	}
 	public boolean isEmpty(int row, int col) {
 		
 		return true;
