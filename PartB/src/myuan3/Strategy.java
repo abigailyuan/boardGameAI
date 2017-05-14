@@ -39,16 +39,16 @@ public abstract class Strategy {
 					int qx = p.getCol();
 					int qy = p.getRow();
 					if((qx+1)<=(board.getSize()-1) &&(board.boardMap[qy][qx+1] == '+')) {
-						legalMoves.add(new Move(p.getCol(), p.getRow(), Direction.RIGHT));	
+						legalMoves.add(new Move(p.getCol(), p.getRow(), Direction.RIGHT));
 					}
 					if((qy+1)<=(board.getSize()-1) &&(board.boardMap[qy+1][qx] == '+')) {
 						legalMoves.add(new Move(p.getCol(), p.getRow(), Direction.UP));	
 					}
 					if((qy-1)>= 0 &&(board.boardMap[qy-1][qx] == '+')) {
-						legalMoves.add(new Move(p.getCol(), p.getRow(), Direction.DOWN));		
+						legalMoves.add(new Move(p.getCol(), p.getRow(), Direction.DOWN));	
 					}
 					if((qx+1) == board.getSize()) {
-						legalMoves.add(new Move(p.getCol(), p.getRow(), Direction.RIGHT));	
+						legalMoves.add(new Move(p.getCol(), p.getRow(), Direction.RIGHT));
 					}
 			}else {// V player		
 				int qx = p.getCol();
@@ -70,6 +70,7 @@ public abstract class Strategy {
 		return legalMoves;
 	}
 	
+
 	private boolean checkUp(Piece p, Board board) {
 		
 		char type = p.getType();

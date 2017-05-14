@@ -18,8 +18,8 @@ public class Oliver implements SliderPlayer{
 	private Strategy strategy;
 	
 	public Oliver() {
-		this.strategy = new DFS("DFS");
-		//this.strategy = new MiniMax("MiniMax");
+		//this.strategy = new DFS("DFS");
+		this.strategy = new Stupid("MiniMax");
 		//this.strategy = new FastWin("FastWin");
 		//this.strategy = new LimitedDepth("LimitedDepth");
 		this.myPieces = new ArrayList<Piece>();
@@ -151,7 +151,7 @@ public class Oliver implements SliderPlayer{
 		return m;
 	}
 	
-	private Piece findPiece(int row, int col) throws Exception {
+	public Piece findPiece(int row, int col) throws Exception {
 		
 		Piece pReturn = null;
 		

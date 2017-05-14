@@ -19,7 +19,7 @@ public class Abby implements SliderPlayer{
 	private Strategy strategy;
 	
 	public Abby() {
-		this.strategy = new MiniMax("MiniMax");
+		this.strategy = new Stupid("MiniMax");
 		//this.strategy = new FastWin("FastWin");
 		//this.strategy = new DFS("DFS");
 		this.myPieces = new ArrayList<Piece>();
@@ -153,7 +153,7 @@ public class Abby implements SliderPlayer{
 		return m;
 	}
 	
-	private Piece findPiece(int row, int col) throws Exception {
+	public Piece findPiece(int row, int col) throws Exception {
 		
 		Piece pReturn = null;
 		

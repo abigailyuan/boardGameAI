@@ -7,9 +7,9 @@ import aiproj.slider.Move;
 import aiproj.slider.Move.Direction;
 import aiproj.slider.SliderPlayer;
 
-public class MiniMax extends Strategy{
+public class Stupid extends Strategy{
 	
-	public MiniMax(String name) {
+	public Stupid(String name) {
 		super(name);
 	}
 
