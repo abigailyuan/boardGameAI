@@ -11,6 +11,9 @@ public class Stupidminimax extends Strategy{
 	char [][] localBoard;
 	char myPlayer;
 	char enemyPlayer;
+	public static final double rush = 20.0;
+	public static final double defensive = 5.0;
+	public static final double unblock = 12.0;
 
 	public Stupidminimax(String name) {
 		super(name);
@@ -35,7 +38,7 @@ public class Stupidminimax extends Strategy{
 		curr_board.myPieces = Board.scpmyPieces(board);
 		curr_board.enemyPieces = Board.scpenemyPieces(board);
 		node root = new node(curr_board, null);
-		node tempNode = minimax(root, 4, true);
+		node tempNode = minimax(root, 3, true);
 		System.out.println("heuristic = "+tempNode.heuristic);
 		m = node.findRoot(tempNode).move;
 		//ArrayList<Move> legalmoves = totalLegalMoves(myPieces, board, playerType);
@@ -99,20 +102,31 @@ public class Stupidminimax extends Strategy{
 
 		if(maximizingPlayer) {
 			node bestNode = null;
+			node currNode = null;
 			double bestValue = -99999;
 			for(node child: root.childList) {
 				bestNode = minimax(child, depth-1, false);
-				bestValue = Math.max(bestValue, bestNode.heuristic);
+				//System.out.println("get curr = "+bestValue+" new = "+bestNode.heuristic);
+				//bestValue = Math.max(bestValue, bestNode.heuristic);
+				if(bestNode.heuristic > bestValue) {
+					currNode = bestNode;
+					bestValue = bestNode.heuristic;
+				}
 			}
 
-			return bestNode;
+			return currNode;
 		}
 		else {
 			node bestNode = null;
+			node currNode = null;
 			double bestValue = 99999;
 			for(node child: root.childList) {
 				bestNode = minimax(child, depth-1, true);
-				bestValue = Math.min(bestValue, bestNode.heuristic);
+				//bestValue = Math.min(bestValue, bestNode.heuristic);
+				if(bestNode.heuristic < bestValue) {
+					currNode = bestNode;
+					bestValue = bestNode.heuristic;
+				}
 			}
 
 			return bestNode;
@@ -194,6 +208,8 @@ class node{
 		int winDist = 0;
 		int aroundDist = 0;
 		int enemyBlock = 0;
+		int positionBonus = 0;
+		int numPiecesBonus = 0;
 	
 		for(Piece p: current.board.myPieces) {
 			
@@ -203,20 +219,33 @@ class node{
 				//get enemyBlock
 				enemyBlock += checkUP(p, current.board, current.board.enemyType);
 				enemyBlock += checkDOWN(p, current.board, current.board.enemyType);
-				enemyBlock += checkLEFT(p, current.board, current.board.enemyType);
+				enemyBlock += checkLEFT(p, current.board, current.board.enemyType)*5;
+				//get aroundDist
+				aroundDist += checkRow(p, current.board, current.board.enemyType);
+				//get bonus
+				positionBonus += p.getRow()*p.getCol();
 				
 			}else {
 				//get winDist
 				winDist += current.board.getSize() - p.getCol();
 				//get enemyBlock
-				enemyBlock += checkDOWN(p, current.board, current.board.enemyType);
+				enemyBlock += checkDOWN(p, current.board, current.board.enemyType)*5;
 				enemyBlock += checkLEFT(p, current.board, current.board.enemyType);
 				enemyBlock += checkRIGHT(p, current.board, current.board.enemyType);
+				//get aroundDist
+				aroundDist += checkCol(p, current.board, current.board.enemyType);
+				//get bonus
+				positionBonus += p.getCol()*p.getRow();
 			}
 			
 		}
+		if(current.board.myPieces.size() < current.parent.board.myPieces.size()) {
+			numPiecesBonus += 20;
+		}
 		
-		heuristic = winDist * 1.0 + enemyBlock * 1.0;
+		heuristic = numPiecesBonus+positionBonus+enemyBlock*Stupidminimax.defensive-aroundDist*Stupidminimax.unblock-winDist*Stupidminimax.rush;
+		
+			//System.out.println("enemyblock = "+enemyBlock+" aroundDist = "+aroundDist+" winDist = "+winDist+" heuristic = "+heuristic);
 		
 		return heuristic;
 	}
@@ -228,6 +257,32 @@ class node{
 		}
 		System.out.println("current row = "+current.move.j);
 		return current;
+	}
+	
+	private static int checkRow(Piece p, Board board, char enemyType) {
+		int num = 0;
+		int row = p.getRow();
+		int col = p.getCol();
+		int i = 0;
+		for(i=col+1;i<board.getSize();i++) {
+			if(board.boardMap[row][i] == enemyType) {
+				num++;
+			}
+		}
+		return num;
+	}
+	
+	private static int checkCol(Piece p, Board board, char enemyType) {
+		int num = 0;
+		int col = p.getCol();
+		int row = p.getRow();
+		int i = 0;
+		for(i=row+1;i<board.getSize();i++) {
+			if(board.boardMap[i][col] == enemyType) {
+				num++;
+			}
+		}
+		return num;
 	}
 	
 	private static int checkUP(Piece p, Board board, char enemyType) {
