@@ -19,8 +19,8 @@ public class Oliver implements SliderPlayer{
 	private Strategy strategy;
 	
 	public Oliver() {
-		//this.strategy = new DFS("DFS");
-		this.strategy = new Stupidminimax("Stupidminimax");
+		this.strategy = new DFS("DFS");
+		//this.strategy = new Stupidminimax("Stupidminimax");
 		//this.strategy = new Stupid("MiniMax");
 		//this.strategy = new FastWin("FastWin");
 		//this.strategy = new LimitedDepth("LimitedDepth");
@@ -77,12 +77,16 @@ public class Oliver implements SliderPlayer{
 				//TODO bug is in update when out of edge without deleting the piece
 				switch(d) {
 					case UP:
-						if(edge == Direction.UP || corner == Corner.UL || corner == Corner.UR) {
+						//if(edge == Direction.UP || corner == Corner.UL || corner == Corner.UR) {
+						if(move.j +1 == this.myBoard.getSize()) {
 							//remove if out of edge
 							if(p.getType() == this.playerType) {
+								System.out.println("remove my piece row = "+move.j+" col = "+move.i);
 								this.myPieces.remove(p);
+								this.myBoard.myPieces.remove(p);
 							}else {
 								this.enemyPieces.remove(p);
+								this.myBoard.enemyPieces.remove(p);
 							}
 							//debug
 							//System.out.println("enter here");
@@ -129,8 +133,10 @@ public class Oliver implements SliderPlayer{
 							//remove if out of edge
 							if(p.getType() == this.playerType) {
 								this.myPieces.remove(p);
+								this.myBoard.myPieces.remove(p);
 							}else {
 								this.enemyPieces.remove(p);
+								this.myBoard.enemyPieces.remove(p);
 							}
 						}else {
 							//move the piece on board and change the coordinates

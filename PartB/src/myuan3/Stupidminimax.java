@@ -9,6 +9,8 @@ import aiproj.slider.SliderPlayer;
 public class Stupidminimax extends Strategy{
 	
 	char [][] localBoard;
+	char myPlayer;
+	char enemyPlayer;
 
 	public Stupidminimax(String name) {
 		super(name);
@@ -18,8 +20,12 @@ public class Stupidminimax extends Strategy{
 	@Override
 	public Move makeMove(Board board, ArrayList<Piece> myPieces, ArrayList<Piece> enemyPieces, char playerType,
 			SliderPlayer player) {
-		for(Piece p: myPieces) {
-			System.out.println("Piece row = "+p.getRow()+" col = "+p.getCol());
+		
+		myPlayer = playerType;
+		if(myPlayer == 'H') {
+			enemyPlayer = 'V';
+		}else {
+			enemyPlayer = 'H';
 		}
 		Move m = null;
 		//create a path record
@@ -30,28 +36,50 @@ public class Stupidminimax extends Strategy{
 		curr_board.enemyPieces = Board.scpenemyPieces(board);
 		node root = new node(curr_board, null);
 		node tempNode = minimax(root, 4, true);
-//		System.out.println("best heuristic = "+tempNode.heuristic);
-//		if(node.findRoot(tempNode) == null) {
-//			System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-//		}
+		System.out.println("heuristic = "+tempNode.heuristic);
 		m = node.findRoot(tempNode).move;
+		//ArrayList<Move> legalmoves = totalLegalMoves(myPieces, board, playerType);
+//		System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@");
+//		for(Move m1: legalmoves) {
+//			System.out.println("move row = "+m1.j+" col = "+m1.i+" direction = "+m1.d);
+//		}
+//		System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@");
+		
 		player.update(m);
 		return m;
 	}
 	
 	public node minimax(node root, int depth, boolean maximizingPlayer) {
-		//System.out.println("depth = "+depth);
-		ArrayList<Move> legalMoves = totalLegalMoves(root.board.myPieces, root.board, maximizingPlayer?root.board.playerType:root.board.enemyType);
+		char playerType;
+		if(maximizingPlayer) {
+			playerType = myPlayer;
+		}else {
+			playerType = enemyPlayer;
+		}
+		ArrayList<Move> legalMoves = totalLegalMoves(root.board.myPieces, root.board, playerType);
+		
+		
 		if(depth == 0 || legalMoves.size() == 0) {
 			root.heuristic = node.calculateHeuristic(root);
 			//System.out.println("returned node move row = "+root.move.j);
 			return root;
 		}
+//		if(depth == 4) {
+//			System.out.println("depth = "+depth);
+//			for(Piece p: root.board.myPieces) {
+//				System.out.println("my piece row = "+p.getRow()+" col = "+p.getCol());
+//			}
+//			System.out.println("player type = "+root.board.playerType);
+//			for(Move m2:legalMoves) {
+//				System.out.println("move row = "+m2.j+" col = "+m2.i+" direction = "+m2.d);
+//			}
+//			System.out.println("-----------------------------------------------");
+//		}
+		
+		
 		//create child list for current node
 		for(Move m: legalMoves) {
-//			System.out.println("row = "+m.j);
-//			System.out.println("col = "+m.i);
-//			System.out.println("direction = "+m.d);
+
 			 Board temp = Board.cpyBoard(root.board);
 			 temp.myPieces = Board.scpenemyPieces(root.board);
 			 temp.enemyPieces = Board.scpmyPieces(root.board);
@@ -59,6 +87,8 @@ public class Stupidminimax extends Strategy{
 			 temp.playerType = root.board.enemyType;
 			 
 			 Piece p = findPiece(m.j, m.i, temp.myPieces, temp.enemyPieces);
+			 
+			 //updateBoard(temp, m, p);
 			 if(p != null) {
 				 updateBoard(temp, m, p);
 			 }
@@ -66,40 +96,25 @@ public class Stupidminimax extends Strategy{
 			 newNode.move = m;
 			 root.childList.add(newNode);
 		}
-//		int i = root.board.getSize();
-//		for(i=root.board.getSize()-1;i>=0;i--) {
-//			root.board.printRow(i);
-//		}
-		//System.out.println("current player is"+root.board.playerType);
-		//System.out.println("-------------------");
+
 		if(maximizingPlayer) {
 			node bestNode = null;
 			double bestValue = -99999;
 			for(node child: root.childList) {
-//				System.out.println("current type "+root.board.playerType);
-//				System.out.println("child type "+child.board.playerType);
 				bestNode = minimax(child, depth-1, false);
 				bestValue = Math.max(bestValue, bestNode.heuristic);
 			}
-//			if(bestNode.move == null) {
-//				System.out.println("NULL MOVE");
-//			}
-			//System.out.println("max node move row = "+bestNode.move.j);
+
 			return bestNode;
 		}
 		else {
 			node bestNode = null;
 			double bestValue = 99999;
 			for(node child: root.childList) {
-//				System.out.println("current type "+root.board.playerType);
-//				System.out.println("child type "+child.board.playerType);
 				bestNode = minimax(child, depth-1, true);
 				bestValue = Math.min(bestValue, bestNode.heuristic);
 			}
-//			if(bestNode.move == null) {
-//				System.out.println("NULL MOVE");
-//			}
-			//System.out.println("min node move row = "+bestNode.move.j);
+
 			return bestNode;
 		}
 	}
@@ -203,7 +218,6 @@ class node{
 		
 		heuristic = winDist * 1.0 + enemyBlock * 1.0;
 		
-		//System.out.println("winDist = "+winDist);
 		return heuristic;
 	}
 	
@@ -246,9 +260,7 @@ class node{
 		if(p.getCol() == 0) {
 			return 0;
 		}else {
-//			System.out.println("row = "+p.getRow());
-//			System.out.println("col = "+p.getCol());
-//			System.out.println("type = "+p.getType());
+
 			if(board.boardMap[p.getRow()][p.getCol()-1] == enemyType) {
 				return 1;
 			}else {

@@ -22,8 +22,8 @@ public class Abby implements SliderPlayer{
 	public Abby() {
 		//this.strategy = new Stupid("MiniMax");
 		//this.strategy = new FastWin("FastWin");
-		this.strategy = new DFS("DFS");
-		//this.strategy = new Stupidminimax("Stupidminimax");
+		//this.strategy = new DFS("DFS");
+		this.strategy = new Stupidminimax("Stupidminimax");
 		this.myPieces = new ArrayList<Piece>();
 		this.enemyPieces = new ArrayList<Piece>();
 	}
@@ -82,8 +82,10 @@ public class Abby implements SliderPlayer{
 							//remove if out of edge
 							if(p.getType() == this.playerType) {
 								this.myPieces.remove(p);
+								this.myBoard.myPieces.remove(p);
 							}else {
 								this.enemyPieces.remove(p);
+								this.myBoard.enemyPieces.remove(p);
 							}
 							//debug
 							//System.out.println("enter here");
@@ -130,8 +132,10 @@ public class Abby implements SliderPlayer{
 							//remove if out of edge
 							if(p.getType() == this.playerType) {
 								this.myPieces.remove(p);
+								this.myBoard.myPieces.remove(p);
 							}else {
 								this.enemyPieces.remove(p);
+								this.myBoard.enemyPieces.remove(p);
 							}
 						}else {
 							//move the piece on board and change the coordinates
