@@ -18,6 +18,9 @@ public class Stupidminimax extends Strategy{
 	@Override
 	public Move makeMove(Board board, ArrayList<Piece> myPieces, ArrayList<Piece> enemyPieces, char playerType,
 			SliderPlayer player) {
+		for(Piece p: myPieces) {
+			System.out.println("Piece row = "+p.getRow()+" col = "+p.getCol());
+		}
 		Move m = null;
 		//create a path record
 		ArrayList<Move> path = new ArrayList<Move>();
@@ -26,23 +29,29 @@ public class Stupidminimax extends Strategy{
 		curr_board.myPieces = Board.scpmyPieces(board);
 		curr_board.enemyPieces = Board.scpenemyPieces(board);
 		node root = new node(curr_board, null);
-		m = node.findRoot(minimax(root, 3, true)).move;
+		node tempNode = minimax(root, 4, true);
+//		System.out.println("best heuristic = "+tempNode.heuristic);
+//		if(node.findRoot(tempNode) == null) {
+//			System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+//		}
+		m = node.findRoot(tempNode).move;
 		player.update(m);
 		return m;
 	}
 	
 	public node minimax(node root, int depth, boolean maximizingPlayer) {
-		System.out.println("depth = "+depth);
+		//System.out.println("depth = "+depth);
 		ArrayList<Move> legalMoves = totalLegalMoves(root.board.myPieces, root.board, maximizingPlayer?root.board.playerType:root.board.enemyType);
 		if(depth == 0 || legalMoves.size() == 0) {
 			root.heuristic = node.calculateHeuristic(root);
+			//System.out.println("returned node move row = "+root.move.j);
 			return root;
 		}
 		//create child list for current node
 		for(Move m: legalMoves) {
-			System.out.println("row = "+m.j);
-			System.out.println("col = "+m.i);
-			System.out.println("direction = "+m.d);
+//			System.out.println("row = "+m.j);
+//			System.out.println("col = "+m.i);
+//			System.out.println("direction = "+m.d);
 			 Board temp = Board.cpyBoard(root.board);
 			 temp.myPieces = Board.scpenemyPieces(root.board);
 			 temp.enemyPieces = Board.scpmyPieces(root.board);
@@ -57,32 +66,40 @@ public class Stupidminimax extends Strategy{
 			 newNode.move = m;
 			 root.childList.add(newNode);
 		}
-		int i = root.board.getSize();
-		for(i=root.board.getSize()-1;i>=0;i--) {
-			root.board.printRow(i);
-		}
+//		int i = root.board.getSize();
+//		for(i=root.board.getSize()-1;i>=0;i--) {
+//			root.board.printRow(i);
+//		}
 		//System.out.println("current player is"+root.board.playerType);
-		System.out.println("-------------------");
+		//System.out.println("-------------------");
 		if(maximizingPlayer) {
 			node bestNode = null;
 			double bestValue = -99999;
 			for(node child: root.childList) {
-				System.out.println("current type "+root.board.playerType);
-				System.out.println("child type "+child.board.playerType);
+//				System.out.println("current type "+root.board.playerType);
+//				System.out.println("child type "+child.board.playerType);
 				bestNode = minimax(child, depth-1, false);
 				bestValue = Math.max(bestValue, bestNode.heuristic);
 			}
+//			if(bestNode.move == null) {
+//				System.out.println("NULL MOVE");
+//			}
+			//System.out.println("max node move row = "+bestNode.move.j);
 			return bestNode;
 		}
 		else {
 			node bestNode = null;
 			double bestValue = 99999;
 			for(node child: root.childList) {
-				System.out.println("current type "+root.board.playerType);
-				System.out.println("child type "+child.board.playerType);
+//				System.out.println("current type "+root.board.playerType);
+//				System.out.println("child type "+child.board.playerType);
 				bestNode = minimax(child, depth-1, true);
 				bestValue = Math.min(bestValue, bestNode.heuristic);
 			}
+//			if(bestNode.move == null) {
+//				System.out.println("NULL MOVE");
+//			}
+			//System.out.println("min node move row = "+bestNode.move.j);
 			return bestNode;
 		}
 	}
@@ -167,7 +184,7 @@ class node{
 			
 			if(current.board.enemyType == 'H') {
 				//get winDist
-				winDist += p.getRow();
+				winDist += current.board.getSize() - p.getRow();
 				//get enemyBlock
 				enemyBlock += checkUP(p, current.board, current.board.enemyType);
 				enemyBlock += checkDOWN(p, current.board, current.board.enemyType);
@@ -186,17 +203,17 @@ class node{
 		
 		heuristic = winDist * 1.0 + enemyBlock * 1.0;
 		
-		
+		//System.out.println("winDist = "+winDist);
 		return heuristic;
 	}
 	
 	public static node findRoot(node current) {
-		if(current.parent.parent == null) {
-			return current.parent;
-		}else {
-			findRoot(current.parent);
+		
+		while(current.parent.parent != null) {
+			current = current.parent;
 		}
-		return null;
+		System.out.println("current row = "+current.move.j);
+		return current;
 	}
 	
 	private static int checkUP(Piece p, Board board, char enemyType) {
@@ -226,9 +243,12 @@ class node{
 	}
 	private static int checkLEFT(Piece p, Board board, char enemyType) {
 		
-		if((p.getCol()-1) == 0) {
+		if(p.getCol() == 0) {
 			return 0;
 		}else {
+//			System.out.println("row = "+p.getRow());
+//			System.out.println("col = "+p.getCol());
+//			System.out.println("type = "+p.getType());
 			if(board.boardMap[p.getRow()][p.getCol()-1] == enemyType) {
 				return 1;
 			}else {

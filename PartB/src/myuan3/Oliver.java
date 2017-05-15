@@ -19,7 +19,8 @@ public class Oliver implements SliderPlayer{
 	private Strategy strategy;
 	
 	public Oliver() {
-		this.strategy = new DFS("DFS");
+		//this.strategy = new DFS("DFS");
+		this.strategy = new Stupidminimax("Stupidminimax");
 		//this.strategy = new Stupid("MiniMax");
 		//this.strategy = new FastWin("FastWin");
 		//this.strategy = new LimitedDepth("LimitedDepth");
@@ -73,7 +74,7 @@ public class Oliver implements SliderPlayer{
 				//check if the piece is at edge or corner
 				Direction edge = this.myBoard.checkEdge(move.j, move.i);
 				Corner corner = this.myBoard.checkCorner(move.j, move.i);
-				
+				//TODO bug is in update when out of edge without deleting the piece
 				switch(d) {
 					case UP:
 						if(edge == Direction.UP || corner == Corner.UL || corner == Corner.UR) {
