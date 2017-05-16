@@ -11,9 +11,10 @@ public class Stupidminimax extends Strategy{
 	char [][] localBoard;
 	char myPlayer;
 	char enemyPlayer;
-	public static final double rush = 20.0;
+	public static final double rush = 6.0;
 	public static final double defensive = 5.0;
-	public static final double unblock = 12.0;
+	public static final double unblock = 1.0;
+	public static final double direction = 8.25;
 
 	public Stupidminimax(String name) {
 		super(name);
@@ -31,17 +32,22 @@ public class Stupidminimax extends Strategy{
 			enemyPlayer = 'H';
 		}
 		Move m = null;
-		//create a path record
-		ArrayList<Move> path = new ArrayList<Move>();
-		//copy the board to a new board
-		Board curr_board = Board.cpyBoard(board);
-		curr_board.myPieces = Board.scpmyPieces(board);
-		curr_board.enemyPieces = Board.scpenemyPieces(board);
-		node root = new node(curr_board, null);
-		node tempNode = minimax(root, 3, true);
-		System.out.println("heuristic = "+tempNode.heuristic);
-		m = node.findRoot(tempNode).move;
-		//ArrayList<Move> legalmoves = totalLegalMoves(myPieces, board, playerType);
+//		//create a path record
+//		ArrayList<Move> path = new ArrayList<Move>();
+		
+		ArrayList<Move> legalmoves = totalLegalMoves(myPieces, board, playerType);
+		if(legalmoves.size() != 0) {
+			//copy the board to a new board
+			Board curr_board = Board.cpyBoard(board);
+			curr_board.myPieces = Board.scpmyPieces(board);
+			curr_board.enemyPieces = Board.scpenemyPieces(board);
+			node root = new node(curr_board, null);
+			node tempNode = minimax(root, 2, true);
+			//System.out.println("heuristic = "+tempNode.heuristic);
+			m = node.findRoot(tempNode).move;
+		}else {
+			return null;
+		}
 //		System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@");
 //		for(Move m1: legalmoves) {
 //			System.out.println("move row = "+m1.j+" col = "+m1.i+" direction = "+m1.d);
@@ -64,7 +70,7 @@ public class Stupidminimax extends Strategy{
 		
 		if(depth == 0 || legalMoves.size() == 0) {
 			root.heuristic = node.calculateHeuristic(root);
-			//System.out.println("returned node move row = "+root.move.j);
+			//System.out.println("returned node move row = "+root.move.j+"col = "+root.move.i+" d = "+root.move.d+" heuristic = "+root.heuristic);
 			return root;
 		}
 //		if(depth == 4) {
@@ -210,43 +216,61 @@ class node{
 		int enemyBlock = 0;
 		int positionBonus = 0;
 		int numPiecesBonus = 0;
+		int directionBonus = 0;
+		Move m = current.move;
 	
 		for(Piece p: current.board.myPieces) {
 			
 			if(current.board.enemyType == 'H') {
 				//get winDist
-				winDist += current.board.getSize() - p.getRow();
+				winDist += Math.max(current.board.getSize() - p.getRow(), current.board.getSize()+1);
 				//get enemyBlock
-				enemyBlock += checkUP(p, current.board, current.board.enemyType);
-				enemyBlock += checkDOWN(p, current.board, current.board.enemyType);
-				enemyBlock += checkLEFT(p, current.board, current.board.enemyType)*5;
+				//enemyBlock += checkUP(p, current.board, current.board.enemyType);
+				//enemyBlock += checkDOWN(p, current.board, current.board.enemyType);
+				enemyBlock += checkLEFT(p, current.board, current.board.enemyType);
 				//get aroundDist
 				aroundDist += checkRow(p, current.board, current.board.enemyType);
 				//get bonus
 				positionBonus += p.getRow()*p.getCol();
+//				if(m.d == Direction.UP) {
+//					directionBonus += Stupidminimax.direction;
+//				}
 				
 			}else {
 				//get winDist
-				winDist += current.board.getSize() - p.getCol();
+				winDist += Math.max(current.board.getSize() - p.getCol(), current.board.getSize()+1);
 				//get enemyBlock
-				enemyBlock += checkDOWN(p, current.board, current.board.enemyType)*5;
-				enemyBlock += checkLEFT(p, current.board, current.board.enemyType);
-				enemyBlock += checkRIGHT(p, current.board, current.board.enemyType);
+				enemyBlock += checkDOWN(p, current.board, current.board.enemyType);
+				//enemyBlock += checkLEFT(p, current.board, current.board.enemyType);
+				//enemyBlock += checkRIGHT(p, current.board, current.board.enemyType);
 				//get aroundDist
 				aroundDist += checkCol(p, current.board, current.board.enemyType);
 				//get bonus
 				positionBonus += p.getCol()*p.getRow();
+				
+//				if(m.d == Direction.RIGHT) {
+//					directionBonus += Stupidminimax.direction;
+//				}
 			}
 			
 		}
-		if(current.board.myPieces.size() < current.parent.board.myPieces.size()) {
-			numPiecesBonus += 20;
-		}
+		
+//		if(current.board.myPieces.size() < current.parent.board.myPieces.size()) {
+//			numPiecesBonus += 100;
+//		}
 		
 		heuristic = numPiecesBonus+positionBonus+enemyBlock*Stupidminimax.defensive-aroundDist*Stupidminimax.unblock-winDist*Stupidminimax.rush;
 		
 			//System.out.println("enemyblock = "+enemyBlock+" aroundDist = "+aroundDist+" winDist = "+winDist+" heuristic = "+heuristic);
-		
+		if(current.board.playerType == 'V') {
+			if(m.d == Direction.RIGHT) {
+				heuristic += Stupidminimax.direction;
+			}
+		}else {
+			if(m.d == Direction.UP) {
+				heuristic += Stupidminimax.direction;
+			}
+		}
 		return heuristic;
 	}
 	
