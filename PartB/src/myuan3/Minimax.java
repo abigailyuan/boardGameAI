@@ -1,199 +1,371 @@
 package myuan3;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 
 import aiproj.slider.Move;
+import aiproj.slider.Move.Direction;
 import aiproj.slider.SliderPlayer;
 
-
-
 public class Minimax extends Strategy{
-	public Minimax(String name) {
-		super(name);
+	
+	char [][] localBoard;
+	char myPlayer;
+	char enemyPlayer;
+	Move lastMove = null;
+	Move lastlastMove =null;
+	int numTurns = 0;
+	
+	public static int STARTPHASE;
+	public static final double rush = 6.0;
+	public static final double defensive = 3.0;
+	public static final double unblock = 1.0;
+	public static final double direction = 100;
+
+	public Minimax() {
+		super();
+		                     
+	}
+
+	@Override
+	public Move makeMove(Board board, ArrayList<Piece> myPieces, ArrayList<Piece> enemyPieces, char playerType,
+			SliderPlayer player) {
+		Minimax.STARTPHASE = board.getSize() - 3;
+		//Minimax.STARTPHASE = 0;
+		Move m = null;
 		
-	}
-
-	private LinkedList<Move> myMoves;
-	private LinkedList<Piece> myMoves_p;
-  private static final double VALUE_WIN  =  999999;
-  private static final double VALUE_LOSS = -999999;
-  private static final double VALUE_INTERRUPT = -9999990;
-
-
-
-@Override
-public Move makeMove(Board board, ArrayList<Piece> myPieces, ArrayList<Piece> enemyPieces, char playerType, SliderPlayer player) {
-
-  Move MyMove = null;
-  Move[] step;
-  step = new Move[1];
-  step[0] = null;
-  char enemyType = 'V';
-  
-  if(playerType == 'H') {
-	  enemyType = 'V';
-  }else {
-	  enemyType = 'H';
-  }
-
-  int maxDepth = 9; // add here
-      boolean allowInterrupt = false; // can not interrupt for depth = 2
-      int Counter = 0;
-
-  for(int depth=2; depth<maxDepth; depth += 2) {
-    double v = alphaBeta(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, board, depth , true, step, true, myPieces, enemyPieces, playerType, enemyType, player, allowInterrupt);
-    allowInterrupt = true;
-
-    if(v==VALUE_INTERRUPT) {
-              break;
-          }
-          MyMove = step[0];
-
-    if(v==VALUE_WIN || v==VALUE_LOSS) {
-      break;
-    }
-
-  }
-
-      myMoves.addFirst(MyMove);
-
-
-      if (MyMove==null) {
-    //myMoves_p.addFirst(null);
-          return null; // pass this round.
-      } else {
-    //myMoves_p.addFirst(((Abby)player).findPiece(MyMove.j,MyMove.i));
-    //sboard.findPiece[MyMove.i][MyMove.j].movePiece(MyMove.d, board);
-
-          return MyMove;
-      }
-}
-
-private double alphaBeta(double a, double b, Board board, int depth, boolean roleFlag, Move[] step, boolean root,ArrayList<Piece> myPieces, ArrayList<Piece> enemyPieces, char playerType, char enemyType, SliderPlayer player, boolean allowInterrupt) {
-
-		//Player currentPlayer = (roleFlag)?player:enemyPlayer;
-		char currentPlayer = (roleFlag)?playerType:enemyType;
-	ArrayList<Move> moves = null;
-	if(depth > 0) {
-		moves = totalLegalMoves(myPieces, board, playerType);
-	}//init
-
-	if(moves==null) {
-			double eval = evaluate(roleFlag);
-		return eval;
-	}
-
-	if(moves.size()==0) {
-			if(enemyPieces.size()==0) {
-					return VALUE_LOSS; // lose
-					}
-					if(myPieces.size()==0) {
-					return VALUE_WIN; // win
-					}
-					// pass
-					return alphaBeta(a, b, depth-1, !roleFlag, null, false);
+		//define my player type and enemy player type
+		myPlayer = playerType;
+		if(myPlayer == 'H') {
+			enemyPlayer = 'V';
+		}else {
+			enemyPlayer = 'H';
+		}
+		
+		//check loops
+		ArrayList<Move> legalmoves = totalLegalMoves(myPieces, board, playerType);
+		if(legalmoves.size() != 0) {
+			if(numTurns < Minimax.STARTPHASE) {
+				
+				//easyStart strategy for start phase
+				m = easyStart(myPieces, board, playerType);
+				
+			}else {
+				
+				//minimax for later turns
+				Board curr_board = Board.cpyBoard(board);
+				curr_board.myPieces = Board.scpmyPieces(board);
+		        curr_board.enemyPieces = Board.scpenemyPieces(board);
+				node root = new node(curr_board, null);
+				node tempNode = minimax(root, 2, false);
+				m = node.findRoot(tempNode).move;
+				numTurns++;
 			}
+		}
+		player.update(m);
+		return m;
+	}
+	
+	public node minimax(node root, int depth, boolean maximizingPlayer) {
+		//System.out.println("depth = "+depth+" maximizingPlayer "+maximizingPlayer);
+		char playerType;
+		if(!maximizingPlayer) {
+			playerType = myPlayer;
+		}else {
+			playerType = enemyPlayer;
+		}
+		
+		//check loops
+		ArrayList<Move> legalMoves = totalLegalMoves(root.board.myPieces, root.board, playerType);
 
-			int Counter;
-			// ------- Interruption ------
-			Counter++;
-	if(Counter>=2000) { // about 1~2ms
-			Counter = 0;
-			if (allowInterrupt) {//false
-					if(needInterrupt()) {
-							return VALUE_INTERRUPT;
-							}
-					}
-			}
-			// ----------------------------
+		
+		//base case
+		if(depth == 0 || legalMoves.size() == 0) {
+			root.heuristic = node.calculateHeuristic(root);
+			return root;
+		}
+		
+		//create child list for current node
+		for(Move m: legalMoves) {
 
-	double value = (roleFlag)?Double.NEGATIVE_INFINITY:Double.POSITIVE_INFINITY;
+			 Board temp = Board.cpyBoard(root.board);
+			 temp.myPieces = Board.scpenemyPieces(root.board);
+			 temp.enemyPieces = Board.scpmyPieces(root.board);
+			 temp.enemyType = root.board.playerType;
+			 temp.playerType = root.board.enemyType;
+			 
+			 Piece p = findPiece(m.j, m.i, temp.myPieces, temp.enemyPieces);
+			 if(p != null) {
+				 updateBoard(temp, m, p);
+			 }
+			 node newNode = new node(temp, root);
+			 newNode.move = m;
+			 root.childList.add(newNode);
+		}
+		
+		//max node
+		if(!maximizingPlayer) {
+			node bestNode = null;
+			node currNode = null;
+			double bestValue = -99999;
+			for(node child: root.childList) {
+				bestNode = minimax(child, depth-1, false);
 
-	for(Move m:moves) {
-
-			//------------make the move--------
-					Piece P = board.findPieces[m.i][m.j];
-					boolean offEdgeFlag = P.movePiece(m.d, board);
-					//---------------------------------
-
-
-			double tmpValue = alphaBeta(a, b, depth-1, !roleFlag, null, false);
-
-					// ------- break it ------
-			if(tmpValue==VALUE_INTERRUPT) {
-					return tmpValue;
-				}
-					// ----------------------------
-
-			// only for first level
-		if(root) { //record movements
-			if(tmpValue>value) {
-				step[0] = m; // choose this move;
-			} else {
-				if(tmpValue==value) { // there is a tile, go right first
-					if(m.d == Move.Direction.RIGHT) {
-							step[0] = m;
-											}
+				if(bestNode.heuristic > bestValue) {
+					currNode = bestNode;
+					bestValue = bestNode.heuristic;
 				}
 			}
+
+			return currNode;
 		}
+		
+		//min node
+		else {
+			node bestNode = null;
+			node currNode = null;
+			double bestValue = 99999;
+			for(node child: root.childList) {
+				bestNode = minimax(child, depth-1, true);
+
+				if(bestNode.heuristic < bestValue) {
+					currNode = bestNode;
+					bestValue = bestNode.heuristic;
+				}
+			}
+			
+			return currNode;
+		}
+	}
+	
+	public void updateBoard(Board board, Move m, Piece p) {
+		int row = m.j;
+		int col = m.i;
+		
+		
+		board.boardMap[row][col] = '+';
+		if(m.d == Direction.UP) {
+			if((row+1) < board.getSize()) {
+				p.setRow(row+1);
+				board.boardMap[row+1][col] = p.getType();
+			}else {
+				board.myPieces.remove(p);
+			}
+		}else if(m.d == Direction.DOWN) {
+			p.setRow(row-1);
+			board.boardMap[row-1][col] = p.getType();
+		}else if(m.d == Direction.LEFT) {
+			p.setCol(col-1);
+			board.boardMap[row][col-1] = p.getType();
+		}else if(m.d == Direction.RIGHT) {
+			if((col+1) < board.getSize()) {
+				p.setCol(col+1);
+				board.boardMap[row][col+1] = p.getType();
+			}else {
+				board.myPieces.remove(p);
+			}
+		}
+	}
+	
+	public Piece findPiece(int row, int col, ArrayList<Piece>myPieces, ArrayList<Piece>enemyPieces){
+		
+		Piece pReturn = null;
+		
+		//find the piece in my pieces
+		for(Piece p: myPieces) {
+			if(p.getCol() == col && p.getRow() == row) {
+				pReturn = p;
+			}
+		}
+		
+		//find the piece in enemy's pieces
+		for(Piece p: enemyPieces) {
+			if(p.getCol() == col && p.getRow() == row) {
+				pReturn = p;
+			}
+		}
+		if(pReturn == null) {
+			return pReturn;
+		}else {
+			return pReturn;
+		}
+	}
+	
+	public Move easyStart(ArrayList<Piece> myPieces, Board board, char playerType) {
+		ArrayList<Move> legalMoves = totalLegalMoves(myPieces, board, playerType);
+		numTurns++;
+		//start with the pieces that never moved before
+		for(Move m: legalMoves) {
+			if(playerType == 'H') {
+				if(m.i < 2 && m.d == Direction.RIGHT) {
+					return m;
+				}
+			}else {
+				if(m.j < 2 && m.d == Direction.UP) {
+					return m;
+				}
+			}
+		}
+		return null;
+	}
+}
 
 
-					// alpha beta
-			if(roleFlag) {
-					value = Math.max(value, tmpValue);
-					a     = Math.max(value, a);
+class node{
+	public Board board;
+	public ArrayList<node> childList;
+	public node parent;
+	public Move move;
+	public double heuristic;
+	
+	public node(Board board, node parent) {
+		this.board = board;
+		this.parent = parent;
+		this.move = null;
+		this.childList = new ArrayList<node>();
+	}
+	
+	public static double calculateHeuristic(node current) {
+		double heuristic = 0;
+		int winDist = 0;
+		int aroundDist = 0;
+		int enemyBlock = 0;
+		int positionBonus = 0;
+		int numPiecesBonus = 0;
+		int directionBonus = 0;
+		Move m = current.move;
+	
+		for(Piece p: current.board.myPieces) {
+			
+			if(current.board.enemyType == 'H') {
+				//get winDist
+				winDist += Math.max(current.board.getSize() - p.getRow(), current.board.getSize()+1);
+				//get enemyBlock
+				enemyBlock += checkUP(p, current.board, current.board.enemyType);
+				enemyBlock += checkDOWN(p, current.board, current.board.enemyType);
+				enemyBlock += checkLEFT(p, current.board, current.board.enemyType);
+				//get aroundDist
+				aroundDist += checkRow(p, current.board, current.board.enemyType);
+				//get bonus
+				positionBonus += p.getRow()+p.getCol();
 
-
-					} else {
-					value = Math.min(value, tmpValue);
-					b     = Math.min(value, b);
-					}
-
-					if(offEdgeFlag) {
-							myPieces.add(P);
-					} else {
-					board.findPieces[P.getCol()][P.getRow()] = null;
-					}
-					board.findPieces[m.i][m.j] = P;
-			P.setCol(m.i);
-			P.setRow(m.j);
-
-			if(b<=a) {
-					break; // cut
-					}
+				
+			}else {
+				//get winDist
+				winDist += Math.max(current.board.getSize() - p.getCol(), current.board.getSize()+1);
+				//get enemyBlock
+				enemyBlock += checkDOWN(p, current.board, current.board.enemyType);
+				enemyBlock += checkLEFT(p, current.board, current.board.enemyType);
+				enemyBlock += checkRIGHT(p, current.board, current.board.enemyType);
+				//get aroundDist
+				aroundDist += checkCol(p, current.board, current.board.enemyType);
+				//get bonus
+				positionBonus += p.getCol()+p.getRow();
 
 			}
-
-			return value;
-}
-
-private boolean needInterrupt() {
-		return false;
+			
+		}
+		
+		heuristic = numPiecesBonus+positionBonus+enemyBlock*Minimax.defensive-aroundDist*Minimax.unblock-winDist*Minimax.rush;
+		
+		if(current.board.playerType == 'H') {
+			if(m.d == Direction.RIGHT) {
+				heuristic += Minimax.direction;
+			}
+		}else {
+			if(m.d == Direction.UP) {
+				heuristic += Minimax.direction;
+			}
+		}
+		
+		if(current.board.myPieces.size() < current.parent.board.myPieces.size()) {
+			heuristic += 1000;
+		}
+		return heuristic;
 	}
-
-public Piece findPiece(int row, int col, ArrayList<Piece>myPieces, ArrayList<Piece>enemyPieces) throws Exception {
 	
-	Piece pReturn = null;
+	public static node findRoot(node current) {
+		
+		while(current.parent.parent != null) {
+			current = current.parent;
+		}
+		System.out.println("current row = "+current.move.j);
+		return current;
+	}
 	
-	//find the piece in my pieces
-	for(Piece p: myPieces) {
-		if(p.getCol() == col && p.getRow() == row) {
-			pReturn = p;
+	private static int checkRow(Piece p, Board board, char enemyType) {
+		int num = 0;
+		int row = p.getRow();
+		int col = p.getCol();
+		int i = 0;
+		for(i=col+1;i<board.getSize();i++) {
+			if(board.boardMap[row][i] == enemyType) {
+				num++;
+			}
+		}
+		return num;
+	}
+	
+	private static int checkCol(Piece p, Board board, char enemyType) {
+		int num = 0;
+		int col = p.getCol();
+		int row = p.getRow();
+		int i = 0;
+		for(i=row+1;i<board.getSize();i++) {
+			if(board.boardMap[i][col] == enemyType) {
+				num++;
+			}
+		}
+		return num;
+	}
+	
+	private static int checkUP(Piece p, Board board, char enemyType) {
+		
+		if((p.getRow()+1) == board.getSize()) {
+			return 0;
+		}else {
+			if(board.boardMap[p.getRow()+1][p.getCol()] == enemyType) {
+				return 1;
+			}else {
+				return 0;
+			}
 		}
 	}
 	
-	//find the piece in enemy's pieces
-	for(Piece p: enemyPieces) {
-		if(p.getCol() == col && p.getRow() == row) {
-			pReturn = p;
+	private static int checkDOWN(Piece p, Board board, char enemyType) {
+		
+		if(p.getRow() == 0) {
+			return 0;
+		}else {
+			if(board.boardMap[p.getRow()-1][p.getCol()] == enemyType) {
+				return 1;
+			}else {
+				return 0;
+			}
 		}
 	}
-	if(pReturn == null) {
-		throw new Exception("Piece not found.");
-	}else {
-		return pReturn;
+	private static int checkLEFT(Piece p, Board board, char enemyType) {
+		
+		if(p.getCol() == 0) {
+			return 0;
+		}else {
+
+			if(board.boardMap[p.getRow()][p.getCol()-1] == enemyType) {
+				return 1;
+			}else {
+				return 0;
+			}
+		}
 	}
-}
+	private static int checkRIGHT(Piece p, Board board, char enemyType) {
+		
+		if((p.getCol()+1) == board.getSize()) {
+			return 0;
+		}else {
+			if(board.boardMap[p.getRow()][p.getCol()+1] == enemyType) {
+				return 1;
+			}else {
+				return 0;
+			}
+		}
+	}
 }

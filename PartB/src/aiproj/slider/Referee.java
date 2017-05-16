@@ -23,7 +23,7 @@ import aiproj.slider.Move;
 public class Referee {
 	
 	//testing----------------------------------------------------------
-	public static final int RUNS = 100;
+	public static final int RUNS = 10;
 
 	/** Load provided classes, and play a game of Slider */
 	public static void main(String[] args) {

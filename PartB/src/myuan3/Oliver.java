@@ -12,18 +12,18 @@ import aiproj.slider.Move;
 
 public class Oliver implements SliderPlayer{
 	
-	public static Board myBoard;
+	public Board myBoard;
 	char playerType;
 	private ArrayList<Piece> myPieces;
 	private ArrayList<Piece> enemyPieces;
 	private Strategy strategy;
 	
 	public Oliver() {
-		//this.strategy = new DFS("DFS");
-		this.strategy = new Stupidminimax("Stupidminimax");
-		//this.strategy = new Stupid("MiniMax");
-		//this.strategy = new FastWin("FastWin");
-		//this.strategy = new LimitedDepth("LimitedDepth");
+		//this.strategy = new Random();
+		this.strategy = new Minimax();
+		//this.strategy = new FastWin();
+		//this.strategy = new DFS();
+		//this.strategy = new LimitedDepth();
 		this.myPieces = new ArrayList<Piece>();
 		this.enemyPieces = new ArrayList<Piece>();
 	}
@@ -40,7 +40,7 @@ public class Oliver implements SliderPlayer{
 		while(scanner.hasNextLine()) {
 			String s = scanner.nextLine();
 			this.myBoard.readRow(row, s);
-			//this.myBoard.printRow(row);
+			
 			row--;
 		}
 		scanner.close();
@@ -65,32 +65,26 @@ public class Oliver implements SliderPlayer{
 			try {
 				p = findPiece(move.j, move.i);
 				
-				//debug
-				//System.out.println("("+p.getRow()+", "+p.getCol()+")"+"piece type: "+p.getType());
-				//debug end
-				
 				//add new piece
 				Direction d = move.d;
 				//check if the piece is at edge or corner
 				Direction edge = this.myBoard.checkEdge(move.j, move.i);
 				Corner corner = this.myBoard.checkCorner(move.j, move.i);
-				//TODO bug is in update when out of edge without deleting the piece
+				
 				switch(d) {
 					case UP:
-						//if(edge == Direction.UP || corner == Corner.UL || corner == Corner.UR) {
+						
 						if(move.j +1 == this.myBoard.getSize()) {
 							//remove if out of edge
 							if(p.getType() == this.playerType) {
-								System.out.println("remove my piece row = "+move.j+" col = "+move.i);
+								
 								this.myPieces.remove(p);
 								this.myBoard.myPieces.remove(p);
 							}else {
 								this.enemyPieces.remove(p);
 								this.myBoard.enemyPieces.remove(p);
 							}
-							//debug
-							//System.out.println("enter here");
-							//debug end
+							
 						}else {
 							//move the piece on board and change the coordinates
 							this.myBoard.boardMap[move.j+1][move.i] = p.getType();

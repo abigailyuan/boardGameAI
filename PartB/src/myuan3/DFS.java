@@ -9,8 +9,8 @@ import aiproj.slider.SliderPlayer;
 
 public class DFS extends Strategy{
 
-	public DFS(String name) {
-		super(name);
+	public DFS() {
+		super();
 	}
 
 	@Override

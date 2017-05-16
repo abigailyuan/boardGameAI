@@ -8,10 +8,9 @@ import aiproj.slider.SliderPlayer;
 
 public abstract class Strategy {
 	
-	private String name;
 
-	public Strategy(String name) {
-		this.name = name;
+	public Strategy() {
+		
 	}
 
 	public abstract Move makeMove(Board board, ArrayList<Piece> myPieces, ArrayList<Piece> enemyPieces, char playerType, SliderPlayer player);
@@ -73,52 +72,6 @@ public abstract class Strategy {
 	}
 	
 
-	private boolean checkUp(Piece p, Board board) {
-		
-		char type = p.getType();
-		if(type == 'H') {
-			if(board.checkEdgeUP(p.getRow(), p.getCol())) {
-				return false;
-			}else if(board.boardMap[p.getRow()+1][p.getCol()] != '+') {
-				return false;
-			}
-		}else if(type == 'V') {
-			if(!board.checkEdgeUP(p.getRow(), p.getCol()) && board.boardMap[p.getRow()+1][p.getCol()] != '+') {
-				return false;
-			}else if(board.checkEdgeUP(p.getRow(), p.getCol())) {
-				return true;
-			}
-		}
-		return true;
-	}
-	private boolean checkDown(Piece p, Board board) {
-
-		if(p.getRow() == 0) {
-			return true;
-		}else if(board.boardMap[board.convertRow(p.getRow())+1][p.getCol()] == '+') {
-			return true;
-		}
-		return false;
-	}
-	private boolean checkLeft(Piece p, Board board) {
-
-		if(p.getCol() == 0) {
-			return true;
-		}else if(board.boardMap[board.convertRow(p.getRow())][p.getCol()-1] == '+') {
-			return true;
-		}
-		return false;
-	}
-	private boolean checkRight(Piece p, Board board) {
-
-		if(p.getCol() == board.getSize()-1) {
-			return true;
-		}else if(board.boardMap[board.convertRow(p.getRow())][p.getCol()+1] == '+') {
-			return true;
-		}
-		return false;
-	}
-	
 	protected int[] doMove(Move m, int size) {
 		Direction d = m.d;
 		int row = m.j;
