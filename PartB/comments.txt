@@ -1,10 +1,3 @@
-	In part A, we used four classes to implement the stucture of the game, a 'BoardGame', a 'Board', a 'Player' and a 'Piece'.
-
-	'BoardGame' is the controller. It creates a board and two players.
-	'Board' contains a board map which contains the input from standard input, and it adds pieces to each of the players piece list.
-	'Player' calculates its own legal moves and can access the board map from 'Board' class.
-
-	If the size of the board is n, then the complexity of reading the board map is O(n^2) and the complexity of computing legal moves is O(n).
 
 	
 	
